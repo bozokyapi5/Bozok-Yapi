@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bozok Apartmanı Aidat Sorgulama</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .card { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 380px; text-align: center; }
+        h2 { color: #1a73e8; margin-bottom: 1.5rem; }
+        select, input { width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #eee; border-radius: 8px; font-size: 16px; transition: 0.3s; box-sizing: border-box; }
+        select:focus, input:focus { border-color: #1a73e8; outline: none; }
+        button { width: 100%; padding: 14px; background-color: #1a73e8; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background-color: #1557b0; }
+        #result { margin-top: 20px; padding: 15px; border-radius: 8px; text-align: left; display: none; border-left: 5px solid #1a73e8; background: #f8f9fa; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Bozok Apartmanı</h2>
+        <p style="font-size: 14px; color: #666;">Dairenizi seçip şifrenizi giriniz.</p>
+        <select id="daireSelect">
+            <option value="">Daire Seçiniz...</option>
+        </select>
+        <input type="password" id="passInput" placeholder="Şifre">
+        <button onclick="sorgula()">SORGULA</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Tablodaki veriler (Sizin dosyanızdan alınmıştır)
+        const veriler = {
+            "1": {sifre: "49861", borc: "0", aidat: "0", toplam: "0"},
+            "2": {sifre: "71246", borc: "0", aidat: "0", toplam: "0"},
+            "3": {sifre: "23583", borc: "0", aidat: "600", toplam: "600"},
+            "4": {sifre: "13675", borc: "0", aidat: "600", toplam: "600"},
+            "5": {sifre: "84621", borc: "0", aidat: "600", toplam: "600"},
+            "8": {sifre: "54894", borc: "0", aidat: "600", toplam: "0"},
+            "16": {sifre: "58934", borc: "600", aidat: "600", toplam: "1200"},
+            "17": {sifre: "45879", borc: "1300", aidat: "600", toplam: "1900"}
+            // Diğer daireleri de buraya aynı formatta ekleyebilirsiniz.
+        };
+
+        const select = document.getElementById('daireSelect');
+        Object.keys(veriler).forEach(d => {
+            let opt = document.createElement('option');
+            opt.value = d;
+            opt.innerHTML = "Daire " + d;
+            select.appendChild(opt);
+        });
+
+        function sorgula() {
+            const d = document.getElementById('daireSelect').value;
+            const p = document.getElementById('passInput').value;
+            const res = document.getElementById('result');
+            
+            if (veriler[d] && veriler[d].sifre === p) {
+                res.style.display = "block";
+                res.innerHTML = `🏠 <b>Daire:</b> ${d}<br>
+                                 💰 <b>Eski Borç:</b> ${veriler[d].borc} TL<br>
+                                 📅 <b>Aidat:</b> ${veriler[d].aidat} TL<br>
+                                 <hr>
+                                 <span style="color:red; font-size:18px;"><b>Ödenecek: ${veriler[d].toplam} TL</b></span>`;
+            } else {
+                alert("Şifre hatalı veya daire seçilmedi!");
+            }
+        }
+    </script>
+</body>
+</html>
