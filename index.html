@@ -133,7 +133,58 @@
     <script>
         window.scrollTo(0, 0);
 
-        https://script.google.com/macros/s/AKfycbxWQcb2F5s00pzIQazvRDGP2AEI00Zavkrmk6oHNlTgZVihMOGEZn0xI6AUa6rt-Lf1ow/exec
+     async function sorgula() {
+    const d = document.getElementById('daireSelect').value;
+    const p = document.getElementById('passInput').value;
+    const res = document.getElementById('result');
+    const ibanArea = document.getElementById('iban-area');
+    const btn = document.querySelector('button[onclick="sorgula()"]');
+    
+    if(!d || !p) { 
+        alert("Lütfen daire seçin ve şifrenizi girin."); 
+        return; 
+    }
+
+    // Sorgulama sırasında butonu geçici olarak devre dışı bırakalım (çift tıklamayı önlemek için)
+    btn.disabled = true;
+    btn.innerText = "Sorgulanıyor...";
+    res.style.display = "none";
+    ibanArea.style.display = "none";
+
+    try {
+        // Sizin verdiğiniz URL'yi buraya tam olarak yerleştirdik
+        const baseURL = 'https://script.google.com/macros/s/AKfycbxWQcb2F5s00pzIQazvRDGP2AEI00Zavkrmk6oHNlTgZVihMOGEZn0xI6AUa6rt-Lf1ow/exec';
+        
+        // URL sonuna ?daire=...&sifre=... şeklinde parametreleri ekliyoruz
+        const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}`;
+
+        const response = await fetch(scriptURL);
+        
+        // Google Script'ten dönen JSON yanıtını alıyoruz
+        const data = await response.json();
+
+        if (data.status === "success") {
+            res.style.display = "block";
+            res.innerHTML = `
+                <div class="res-row"><span>🏠 Daire:</span> <b>${d}</b></div>
+                <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data.borc} TL</b></div>
+                <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data.aidat} TL</b></div>
+                <div class="res-row total-row"><span>TOPLAM:</span> <span>${data.toplam} TL</span></div>
+            `;
+            // Mobilde sonucun görünmesi için sayfayı hafifçe aşağı kaydıralım
+            res.scrollIntoView({behavior: "smooth"});
+        } else {
+            alert("Hatalı şifre! Lütfen kontrol edip tekrar deneyin.");
+        }
+    } catch (e) {
+        console.error("Hata detayı:", e);
+        alert("Veri çekilemedi. İnternet bağlantınızı veya Google Script izinlerini kontrol edin.");
+    } finally {
+        // İşlem bitince butonu eski haline getiriyoruz
+        btn.disabled = false;
+        btn.innerText = "SORGULA";
+    }
+}0xI6AUa6rt-Lf1ow/exec
 
         const select = document.getElementById('daireSelect');
         for (let i = 1; i <= 31; i++) {
