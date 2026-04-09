@@ -148,16 +148,19 @@
         const data = await response.json();
         
         // Tablonuzdaki sütun isimlerine göre eşleştirme yapıyoruz
-        const kayit = data.find(item => String(item["Daire No"]).trim() === String(d).trim());
+        // index.html içindeki ilgili kısım böyle olmalı:
+const kayit = data.find(item => decode(item["Daire No"]) === String(d));
 
-        if (kayit && String(kayit["Şifre"]).trim() === String(p).trim()) {
-            res.style.display = "block";
-            res.innerHTML = `
-                <div class="res-row"><span>🏠 Daire:</span> <b>${kayit["Daire No"]}</b></div>
-                <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${kayit["Geçmiş Borç"] || 0} TL</b></div>
-                <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${kayit["Nisan Aidatı"] || 0} TL</b></div>
-                <div class="res-row total-row"><span>TOPLAM:</span> <span>${kayit["Toplam"] || 0} TL</span></div>
-            `;
+// Burada 'item' yerine 'kayit' kullanmalıyız:
+if (kayit && decode(kayit["Şifre"]) === String(p)) { 
+    res.style.display = "block";
+    res.innerHTML = `
+        <div class="res-row"><span>🏠 Daire:</span> <b>${decode(kayit["Daire No"])}</b></div>
+        <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${decode(kayit["Geçmiş Borç"])} TL</b></div>
+        <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${decode(kayit["Nisan Aidatı"])} TL</b></div>
+        <div class="res-row total-row"><span>TOPLAM:</span> <span>${decode(kayit["Toplam"])} TL</span></div>
+    `;
+}
         } else {
             alert("Daire veya şifre hatalı!");
         }
