@@ -1,27 +1,201 @@
-function doGet(e) {
-  var daireNo = e.parameter.daire;
-  var sifre = e.parameter.sifre;
-  
-  // BURAYA kendi Sheet ID'ni yapıştır
-  var ss = SpreadsheetApp.openById('1A2b3C4d5E6fG7h8I9j0K1l2M3n4O5p6Q'); 
-  var sheet = ss.getSheets()[0]; // İlk sayfayı seçer
-  var rows = sheet.getDataRange().getValues();
-  
-  for (var i = 1; i < rows.length; i++) {
-    // Hem tablodaki hem gelen verideki boşlukları silip metne çeviriyoruz
-    var tableDaire = String(rows[i][0]).trim();
-    var tableSifre = String(rows[i][1]).trim();
-    
-    if (tableDaire === String(daireNo).trim() && tableSifre === String(sifre).trim()) {
-      return ContentService.createTextOutput(JSON.stringify({
-        status: "success",
-        borc: rows[i][2],
-        aidat: rows[i][3],
-        toplam: rows[i][4]
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-  }
-  
-  return ContentService.createTextOutput(JSON.stringify({status: "error"}))
-    .setMimeType(ContentService.MimeType.JSON);
-}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bozok Yapı Sorgulama</title>
+    <style>
+        /* Sayfa düzeni ve dikey boşlukların %10 seviyesine çekilmesi */
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background-color: #f4f7f9; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            justify-content: flex-start; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 15px 10px; 
+            box-sizing: border-box;
+        }
+        
+        .card { 
+            background: white; 
+            padding: 25px 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
+            width: 100%; 
+            max-width: 400px; 
+            text-align: center; 
+            margin-bottom: 15px;
+        }
+        
+        h2 { color: #2c3e50; margin-bottom: 5px; font-size: 22px; }
+        .sub-title { color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+        
+        select, input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 8px 0; 
+            border: 2px solid #edf2f7; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            box-sizing: border-box; 
+            outline: none; 
+            -webkit-appearance: none;
+        }
+        select:focus, input:focus { border-color: #3498db; }
+        
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background-color: #3498db; 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 17px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            transition: 0.2s; 
+        }
+        button:active { transform: scale(0.98); }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .iban-btn { background-color: #2ecc71; margin-top: 8px; font-size: 14px; padding: 12px; }
+        
+        #result, #iban-area { 
+            margin-top: 20px; 
+            padding: 18px; 
+            border-radius: 12px; 
+            text-align: left; 
+            display: none; 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            animation: fadeIn 0.4s ease-out; 
+        }
+        
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
+        .total-row { border-top: 2px solid #e2e8f0; margin-top: 10px; padding-top: 10px; color: #e74c3c; font-weight: bold; font-size: 18px; }
+        
+        /* Uyarılar Bölümü: Dört tarafı kapalı kırmızı çerçeve */
+        .warnings { 
+            width: 100%;
+            max-width: 400px;
+            text-align: left; 
+            background: #fff5f5; 
+            padding: 15px; 
+            border-radius: 15px; 
+            border: 5px solid #e74c3c; 
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        .warnings h4 { margin: 0 0 8px 0; color: #c0392b; font-size: 15px; }
+        .warnings ul { margin: 0; padding-left: 18px; font-size: 13px; color: #444; line-height: 1.5; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Bozok Yapı</h2>
+        <div class="sub-title">Nisan 2026 Aidat Sorgulama</div>
+        
+        <select id="daireSelect"><option value="">Dairenizi Seçin</option></select>
+        <input type="password" id="passInput" placeholder="Size Özel Şifre" inputmode="numeric">
+        
+        <button id="queryBtn" onclick="sorgula()">SORGULA</button>
+        <button class="iban-btn" onclick="toggleIban()">ÖDEME BİLGİLERİ (IBAN)</button>
+        
+        <div id="iban-area">
+            <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">Bozok Yapı Yönetimi</div>
+            <div style="font-size: 13px; line-height: 1.6;">
+                <b>IBAN:</b> TR00 0000 0000 0000 0000 0000 00<br>
+                <b>Alıcı:</b> Apartman Yönetimi<br>
+                <span style="color:#e67e22;">* Açıklama: Daire No ve İsim yazınız.</span>
+            </div>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <div class="warnings">
+        <h4>📢 Önemli Uyarılar</h4>
+        <ul>
+            <li>Komşularınızı rahatsız edecek gürültüden kaçınınız.</li>
+            <li>Ortak alanlara ve bahçeye çöp atmayınız.</li>
+            <li>Yangın merdivenlerine eşya koymayınız.</li>
+            <li>Otopark yer önceliğine dikkat ediniz.</li>
+            <li>Aidatlar her ayın 15'ine kadar ödenmelidir.</li>
+        </ul>
+    </div>
+
+    <script>
+        // Sayfanın en üstten başlamasını sağlar
+        window.scrollTo(0, 0);
+
+        // Daire seçim listesini oluşturur
+        const select = document.getElementById('daireSelect');
+        for (let i = 1; i <= 31; i++) {
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = "Daire No: " + i;
+            select.appendChild(opt);
+        }
+
+        async function sorgula() {
+            const d = document.getElementById('daireSelect').value;
+            const p = document.getElementById('passInput').value;
+            const res = document.getElementById('result');
+            const btn = document.getElementById('queryBtn');
+            const ibanArea = document.getElementById('iban-area');
+            
+            if(!d || !p) { 
+                alert("Lütfen daire seçin ve şifrenizi girin."); 
+                return; 
+            }
+
+            // Arayüz temizliği ve buton kilidi
+            btn.disabled = true;
+            btn.innerText = "Sorgulanıyor...";
+            res.style.display = "none";
+            ibanArea.style.display = "none";
+
+            try {
+                // Senin paylaştığın Google Script URL'si
+                const baseURL = 'https://script.google.com/macros/s/AKfycbxWQcb2F5s00pzIQazvRDGP2AEI00Zavkrmk6oHNlTgZVihMOGEZn0xI6AUa6rt-Lf1ow/exec';
+                const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}`;
+
+                const response = await fetch(scriptURL);
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    res.style.display = "block";
+                    res.innerHTML = `
+                        <div class="res-row"><span>🏠 Daire:</span> <b>${d}</b></div>
+                        <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data.borc} TL</b></div>
+                        <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data.aidat} TL</b></div>
+                        <div class="res-row total-row"><span>TOPLAM:</span> <span>${data.toplam} TL</span></div>
+                    `;
+                    res.scrollIntoView({behavior: "smooth"});
+                } else {
+                    alert("Hatalı şifre! Lütfen kontrol edip tekrar deneyin.");
+                }
+            } catch (e) {
+                console.error("Hata:", e);
+                alert("Veri çekilemedi. Google Script izinlerini veya internetinizi kontrol edin.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "SORGULA";
+            }
+        }
+
+        function toggleIban() {
+            const iban = document.getElementById('iban-area');
+            const res = document.getElementById('result');
+            iban.style.display = iban.style.display === "block" ? "none" : "block";
+            res.style.display = "none";
+        }
+    </script>
+</body>
+</html>
