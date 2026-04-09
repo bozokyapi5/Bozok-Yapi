@@ -1,0 +1,30 @@
+name: Verileri Manuel Guncelle
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Depoyu Kontrol Et
+        uses: actions/checkout@v3
+
+      - name: Python Kur
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Bagimliliklari Yukle
+        run: |
+          pip install pandas requests
+
+      - name: Guncelleme Kodunu Calistir
+        run: python guncelle.py
+
+      - name: Degisiklikleri Kaydet
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add veriler.json
+          git commit -m "Aidat verileri guncellendi" || echo "Degisiklik yok."
+          git push
