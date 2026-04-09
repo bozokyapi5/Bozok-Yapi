@@ -5,69 +5,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
     <style>
-        /* Sayfanın yukarıdan başlamasını sağlayan düzenlemeler */
+        /* Sayfanın yukarıdan başlaması ve ekrana sığması için düzenleme */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             background-color: #f4f7f9; 
             display: flex; 
             flex-direction: column;
             align-items: center; 
-            justify-content: flex-start; /* İçeriği yukarı yaslar */
+            justify-content: flex-start; 
             min-height: 100vh; 
             margin: 0; 
-            padding: 20px 15px; /* Üstten ve yanlardan ferah boşluk */
+            padding: 15px 10px; /* Kenar boşlukları optimize edildi */
             box-sizing: border-box;
         }
         
         .card { 
             background: white; 
-            padding: 40px 25px; 
-            border-radius: 25px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            padding: 25px 20px; /* İç boşluk %10 seviyesine çekildi */
+            border-radius: 20px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
             width: 100%; 
-            max-width: 420px; 
+            max-width: 400px; 
             text-align: center; 
-            margin-bottom: 30px; /* Alt boşluk */
+            margin-bottom: 15px;
         }
         
-        h2 { color: #2c3e50; margin-bottom: 8px; font-size: 26px; }
-        .sub-title { color: #7f8c8d; font-size: 16px; margin-bottom: 35px; }
+        h2 { color: #2c3e50; margin-bottom: 5px; font-size: 22px; }
+        .sub-title { color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
         
         select, input { 
             width: 100%; 
-            padding: 18px; 
-            margin: 12px 0; 
+            padding: 14px; /* %10 oranında küçültüldü */
+            margin: 8px 0; 
             border: 2px solid #edf2f7; 
-            border-radius: 15px; 
+            border-radius: 12px; 
             font-size: 16px; 
             box-sizing: border-box; 
             outline: none; 
-            transition: 0.3s; 
-            -webkit-appearance: none; /* iOS için stil düzeltme */
+            -webkit-appearance: none;
         }
         select:focus, input:focus { border-color: #3498db; }
         
         button { 
             width: 100%; 
-            padding: 18px; 
+            padding: 15px; 
             background-color: #3498db; 
             color: white; 
             border: none; 
-            border-radius: 15px; 
-            font-size: 18px; 
+            border-radius: 12px; 
+            font-size: 17px; 
             font-weight: bold; 
             cursor: pointer; 
-            margin-top: 15px; 
+            margin-top: 10px; 
             transition: 0.2s; 
         }
         button:active { transform: scale(0.98); }
         
-        .iban-btn { background-color: #2ecc71; margin-top: 12px; font-size: 15px; }
+        .iban-btn { background-color: #2ecc71; margin-top: 8px; font-size: 14px; padding: 12px; }
         
         #result, #iban-area { 
-            margin-top: 30px; 
-            padding: 22px; 
-            border-radius: 15px; 
+            margin-top: 20px; 
+            padding: 18px; 
+            border-radius: 12px; 
             text-align: left; 
             display: none; 
             background: #f8fafc; 
@@ -75,24 +74,24 @@
             animation: fadeIn 0.4s ease-out; 
         }
         
-        .res-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 16px; }
-        .total-row { border-top: 2px solid #e2e8f0; margin-top: 15px; padding-top: 15px; color: #e74c3c; font-weight: bold; font-size: 20px; }
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
+        .total-row { border-top: 2px solid #e2e8f0; margin-top: 10px; padding-top: 10px; color: #e74c3c; font-weight: bold; font-size: 18px; }
         
         .warnings { 
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
             text-align: left; 
             background: #fff5f5; 
-            padding: 20px; 
+            padding: 15px; 
             border-radius: 15px; 
             border-left: 5px solid #e74c3c; 
             box-sizing: border-box;
-            margin-top: 10px;
+            margin-top: 5px;
         }
-        .warnings h4 { margin: 0 0 12px 0; color: #c0392b; font-size: 16px; display: flex; align-items: center; }
-        .warnings ul { margin: 0; padding-left: 20px; font-size: 14px; color: #444; line-height: 1.7; }
+        .warnings h4 { margin: 0 0 8px 0; color: #c0392b; font-size: 15px; }
+        .warnings ul { margin: 0; padding-left: 18px; font-size: 13px; color: #444; line-height: 1.5; }
         
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -107,12 +106,11 @@
         <button class="iban-btn" onclick="toggleIban()">ÖDEME BİLGİLERİ (IBAN)</button>
         
         <div id="iban-area">
-            <div style="font-weight: bold; color: #27ae60; margin-bottom: 10px;">Bozok Yapı Yönetimi</div>
-            <div style="font-size: 14px; line-height: 1.8;">
+            <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">Bozok Yapı Yönetimi</div>
+            <div style="font-size: 13px; line-height: 1.6;">
                 <b>IBAN:</b> TR00 0000 0000 0000 0000 0000 00<br>
-                <b>Banka:</b> [Banka Adı]<br>
                 <b>Alıcı:</b> Apartman Yönetimi<br>
-                <span style="color:#e67e22; font-weight: bold;">* Açıklama: Daire No ve İsim yazınız.</span>
+                <span style="color:#e67e22;">* Açıklama: Daire No ve İsim yazınız.</span>
             </div>
         </div>
 
@@ -122,16 +120,15 @@
     <div class="warnings">
         <h4>📢 Önemli Uyarılar</h4>
         <ul>
-            <li>Dairenizde komşunuzu rahatsız edecek gürültüden kaçınınız.</li>
+            <li>Komşularınızı rahatsız edecek gürültüden kaçınınız.</li>
             <li>Ortak alanlara ve bahçeye çöp atmayınız.</li>
             <li>Yangın merdivenlerine eşya koymayınız.</li>
-            <li>Otoparkta yer önceliğine ve araç yüksekliğine dikkat ediniz.</li>
-            <li>Aidat ödemeleri her ayın 15'ine kadar yapılmalıdır.</li>
+            <li>Otopark yer önceliğine dikkat ediniz.</li>
+            <li>Aidatlar her ayın 15'ine kadar ödenmelidir.</li>
         </ul>
     </div>
 
     <script>
-        // Sayfanın en üstten başlamasını garanti altına alıyoruz
         window.scrollTo(0, 0);
 
         const data = {
@@ -162,9 +159,6 @@
             const res = document.getElementById('result');
             iban.style.display = iban.style.display === "block" ? "none" : "block";
             res.style.display = "none";
-            if(iban.style.display === "block") {
-                iban.scrollIntoView({behavior: "smooth"});
-            }
         }
 
         function sorgula() {
@@ -181,7 +175,6 @@
                     <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data[d].a} TL</b></div>
                     <div class="res-row total-row"><span>TOPLAM:</span> <span>${data[d].t} TL</span></div>
                 `;
-                res.scrollIntoView({behavior: "smooth"});
             } else {
                 alert("Hatalı şifre veya daire seçimi!");
             }
