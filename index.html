@@ -166,7 +166,7 @@
                 const baseURL = 'https://script.google.com/macros/s/AKfycbxWQcb2F5s00pzIQazvRDGP2AEI00Zavkrmk6oHNlTgZVihMOGEZn0xI6AUa6rt-Lf1ow/exec';
                 const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}`;
 
-                const response = await fetch(scriptURL);
+                const response = await fetch(scriptURL, { redirect: 'follow' });
                 const data = await response.json();
 
                 if (data.status === "success") {
