@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
     <style>
-        /* Sayfa düzeni ve dikey boşlukların %10'a çekilmesi */
+        /* Sayfa düzeni ve dikey boşlukların %10 seviyesine çekilmesi */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             background-color: #f4f7f9; 
@@ -60,6 +60,7 @@
             transition: 0.2s; 
         }
         button:active { transform: scale(0.98); }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
         
         .iban-btn { background-color: #2ecc71; margin-top: 8px; font-size: 14px; padding: 12px; }
         
@@ -85,7 +86,7 @@
             background: #fff5f5; 
             padding: 15px; 
             border-radius: 15px; 
-            border: 5px solid #e74c3c; /* Tüm kenarlar kırmızı */
+            border: 5px solid #e74c3c; 
             box-sizing: border-box;
             margin-top: 5px;
         }
@@ -97,21 +98,20 @@
 </head>
 <body>
     <div class="card">
-        <h2>BOZOK YAPI</h2>
+        <h2>Bozok Yapı</h2>
         <div class="sub-title">Nisan 2026 Aidat Sorgulama</div>
         
         <select id="daireSelect"><option value="">Dairenizi Seçin</option></select>
         <input type="password" id="passInput" placeholder="Size Özel Şifre" inputmode="numeric">
         
-        <button onclick="sorgula()">SORGULA</button>
+        <button id="queryBtn" onclick="sorgula()">SORGULA</button>
         <button class="iban-btn" onclick="toggleIban()">ÖDEME BİLGİLERİ (IBAN)</button>
         
         <div id="iban-area">
-            <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">Bozok Yapı Aidat Ödeme Bilgileri</div>
+            <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">Bozok Yapı Yönetimi</div>
             <div style="font-size: 13px; line-height: 1.6;">
-                <b>IBAN:</b> TR49 0001 0040 3362 5120 5150 09<br>
-                <b>Alıcı:</b> AYHAN GÖKKAYA<br>
-                <b>Banka:</b> Ziraat Bankası<br>
+                <b>IBAN:</b> TR00 0000 0000 0000 0000 0000 00<br>
+                <b>Alıcı:</b> Apartman Yönetimi<br>
                 <span style="color:#e67e22;">* Açıklama: Daire No ve İsim yazınız.</span>
             </div>
         </div>
@@ -131,67 +131,62 @@
     </div>
 
     <script>
+        // Sayfanın en üstten başlamasını sağlar
         window.scrollTo(0, 0);
 
-     async function sorgula() {
-    const d = document.getElementById('daireSelect').value;
-    const p = document.getElementById('passInput').value;
-    const res = document.getElementById('result');
-    const ibanArea = document.getElementById('iban-area');
-    const btn = document.querySelector('button[onclick="sorgula()"]');
-    
-    if(!d || !p) { 
-        alert("Lütfen daire seçin ve şifrenizi girin."); 
-        return; 
-    }
-
-    // Sorgulama sırasında butonu geçici olarak devre dışı bırakalım (çift tıklamayı önlemek için)
-    btn.disabled = true;
-    btn.innerText = "Sorgulanıyor...";
-    res.style.display = "none";
-    ibanArea.style.display = "none";
-
-    try {
-        // Sizin verdiğiniz URL'yi buraya tam olarak yerleştirdik
-        const baseURL = 'https://script.google.com/macros/s/AKfycbxWQcb2F5s00pzIQazvRDGP2AEI00Zavkrmk6oHNlTgZVihMOGEZn0xI6AUa6rt-Lf1ow/exec';
-        
-        // URL sonuna ?daire=...&sifre=... şeklinde parametreleri ekliyoruz
-        const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}`;
-
-        const response = await fetch(scriptURL);
-        
-        // Google Script'ten dönen JSON yanıtını alıyoruz
-        const data = await response.json();
-
-        if (data.status === "success") {
-            res.style.display = "block";
-            res.innerHTML = `
-                <div class="res-row"><span>🏠 Daire:</span> <b>${d}</b></div>
-                <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data.borc} TL</b></div>
-                <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data.aidat} TL</b></div>
-                <div class="res-row total-row"><span>TOPLAM:</span> <span>${data.toplam} TL</span></div>
-            `;
-            // Mobilde sonucun görünmesi için sayfayı hafifçe aşağı kaydıralım
-            res.scrollIntoView({behavior: "smooth"});
-        } else {
-            alert("Hatalı şifre! Lütfen kontrol edip tekrar deneyin.");
-        }
-    } catch (e) {
-        console.error("Hata detayı:", e);
-        alert("Veri çekilemedi. İnternet bağlantınızı veya Google Script izinlerini kontrol edin.");
-    } finally {
-        // İşlem bitince butonu eski haline getiriyoruz
-        btn.disabled = false;
-        btn.innerText = "SORGULA";
-    }
-}0xI6AUa6rt-Lf1ow/exec
-
+        // Daire seçim listesini oluşturur
         const select = document.getElementById('daireSelect');
         for (let i = 1; i <= 31; i++) {
-            if(data[i]) {
-                let opt = document.createElement('option');
-                opt.value = i; opt.innerHTML = "Daire No: " + i;
-                select.appendChild(opt);
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerHTML = "Daire No: " + i;
+            select.appendChild(opt);
+        }
+
+        async function sorgula() {
+            const d = document.getElementById('daireSelect').value;
+            const p = document.getElementById('passInput').value;
+            const res = document.getElementById('result');
+            const btn = document.getElementById('queryBtn');
+            const ibanArea = document.getElementById('iban-area');
+            
+            if(!d || !p) { 
+                alert("Lütfen daire seçin ve şifrenizi girin."); 
+                return; 
+            }
+
+            // Arayüz temizliği ve buton kilidi
+            btn.disabled = true;
+            btn.innerText = "Sorgulanıyor...";
+            res.style.display = "none";
+            ibanArea.style.display = "none";
+
+            try {
+                // Senin paylaştığın Google Script URL'si
+                const baseURL = 'https://script.google.com/macros/s/AKfycbxWQcb2F5s00pzIQazvRDGP2AEI00Zavkrmk6oHNlTgZVihMOGEZn0xI6AUa6rt-Lf1ow/exec';
+                const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}`;
+
+                const response = await fetch(scriptURL);
+                const data = await response.json();
+
+                if (data.status === "success") {
+                    res.style.display = "block";
+                    res.innerHTML = `
+                        <div class="res-row"><span>🏠 Daire:</span> <b>${d}</b></div>
+                        <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data.borc} TL</b></div>
+                        <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data.aidat} TL</b></div>
+                        <div class="res-row total-row"><span>TOPLAM:</span> <span>${data.toplam} TL</span></div>
+                    `;
+                    res.scrollIntoView({behavior: "smooth"});
+                } else {
+                    alert("Hatalı şifre! Lütfen kontrol edip tekrar deneyin.");
+                }
+            } catch (e) {
+                console.error("Hata:", e);
+                alert("Veri çekilemedi. Google Script izinlerini veya internetinizi kontrol edin.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "SORGULA";
             }
         }
 
@@ -200,25 +195,6 @@
             const res = document.getElementById('result');
             iban.style.display = iban.style.display === "block" ? "none" : "block";
             res.style.display = "none";
-        }
-
-        function sorgula() {
-            const d = document.getElementById('daireSelect').value;
-            const p = document.getElementById('passInput').value;
-            const res = document.getElementById('result');
-            document.getElementById('iban-area').style.display = "none";
-            
-            if (data[d] && data[d].s === p) {
-                res.style.display = "block";
-                res.innerHTML = `
-                    <div class="res-row"><span>🏠 Daire:</span> <b>${d}</b></div>
-                    <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data[d].b} TL</b></div>
-                    <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data[d].a} TL</b></div>
-                    <div class="res-row total-row"><span>TOPLAM:</span> <span>${data[d].t} TL</span></div>
-                `;
-            } else {
-                alert("Hatalı şifre veya daire seçimi!");
-            }
         }
     </script>
 </body>
