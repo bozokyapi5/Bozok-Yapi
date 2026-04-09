@@ -163,7 +163,7 @@
 
             try {
                 // Senin paylaştığın Google Script URL'si
-                const baseURL = 'https://script.google.com/macros/s/AKfycbxWQcb2F5s00pzIQazvRDGP2AEI00Zavkrmk6oHNlTgZVihMOGEZn0xI6AUa6rt-Lf1ow/exec';
+                const baseURL = 'https://script.google.com/macros/s/AKfycby030F0ztpQ1oWDFk2u2dGZbYQ8f7-x77Tyu-9OPZlKNKepGOqqEFTxK7av1071v91h/exec';
                 const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}`;
 
                 const response = await fetch(scriptURL, { redirect: 'follow' });
