@@ -3,36 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bozok Apartmanı Sorgulama</title>
+    <title>Bozok Yapı Sorgulama</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 10px; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #2c3e50; margin-bottom: 5px; }
-        .sub-title { color: #7f8c8d; font-size: 14px; margin-bottom: 25px; }
-        select, input { width: 100%; padding: 14px; margin: 10px 0; border: 2px solid #edf2f7; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s; }
+        /* Sayfa genelini biraz daha uzun ve ferah yaptık */
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; align-items: center; min-height: 120vh; margin: 0; padding: 20px 10px; }
+        
+        .card { background: white; padding: 40px 25px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 420px; text-align: center; }
+        
+        h2 { color: #2c3e50; margin-bottom: 8px; font-size: 26px; }
+        .sub-title { color: #7f8c8d; font-size: 16px; margin-bottom: 35px; }
+        
+        select, input { width: 100%; padding: 18px; margin: 12px 0; border: 2px solid #edf2f7; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.3s; }
         select:focus, input:focus { border-color: #3498db; }
-        button { width: 100%; padding: 15px; background-color: #3498db; color: white; border: none; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s; }
+        
+        button { width: 100%; padding: 18px; background-color: #3498db; color: white; border: none; border-radius: 15px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 15px; transition: 0.2s; }
         button:active { transform: scale(0.98); }
-        #result { margin-top: 25px; padding: 18px; border-radius: 12px; text-align: left; display: none; background: #f8fafc; border: 1px solid #e2e8f0; }
-        .res-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
-        .total-row { border-top: 2px solid #e2e8f0; margin-top: 10px; padding-top: 10px; color: #e74c3c; font-weight: bold; font-size: 18px; }
+        
+        /* IBAN Butonu stili */
+        .iban-btn { background-color: #2ecc71; margin-top: 12px; font-size: 15px; }
+        
+        #result, #iban-area { margin-top: 30px; padding: 22px; border-radius: 15px; text-align: left; display: none; background: #f8fafc; border: 1px solid #e2e8f0; animation: fadeIn 0.5s; }
+        
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 16px; }
+        .total-row { border-top: 2px solid #e2e8f0; margin-top: 15px; padding-top: 15px; color: #e74c3c; font-weight: bold; font-size: 20px; }
+        
+        /* Duyurular ve Uyarılar Bölümü */
+        .warnings { margin-top: 35px; text-align: left; background: #fff5f5; padding: 15px; border-radius: 12px; border-left: 4px solid #e74c3c; }
+        .warnings h4 { margin: 0 0 10px 0; color: #c0392b; font-size: 15px; }
+        .warnings ul { margin: 0; padding-left: 18px; font-size: 13px; color: #444; line-height: 1.6; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Bozok Apartmanı</h2>
+        <h2>Bozok Yapı</h2>
         <div class="sub-title">Nisan 2026 Aidat Sorgulama</div>
         
         <select id="daireSelect"><option value="">Dairenizi Seçin</option></select>
         <input type="password" id="passInput" placeholder="Size Özel Şifre" inputmode="numeric">
         
         <button onclick="sorgula()">SORGULA</button>
+        <button class="iban-btn" onclick="toggleIban()">ÖDEME BİLGİLERİ (IBAN)</button>
         
+        <div id="iban-area">
+            <div style="font-weight: bold; color: #27ae60; margin-bottom: 10px;">Bozok Yapı Yönetimi</div>
+            <div style="font-size: 14px; line-height: 1.8;">
+                <b>IBAN:</b> TR00 0000 0000 0000 0000 0000 00<br>
+                <b>Banka:</b> [Banka Adı]<br>
+                <b>Alıcı:</b> Apartman Yönetimi<br>
+                <span style="color:#e67e22; font-weight: bold;">* Açıklama: Daire No ve İsim yazınız.</span>
+            </div>
+        </div>
+
         <div id="result"></div>
+
+        <div class="warnings">
+            <h4>📢 Önemli Uyarılar</h4>
+            <ul>
+                <li>Dairenizde komşunuzu rahatsız edecek gürültüden kaçınınız.</li>
+                <li>Ortak alanlara ve bahçeye çöp atmayınız.</li>
+                <li>Yangın merdivenlerine eşya koymayınız.</li>
+                <li>Otoparkta yer önceliğine ve araç yüksekliğine dikkat ediniz.</li>
+                <li>Aidat ödemeleri her ayın 15'ine kadar yapılmalıdır.</li>
+            </ul>
+        </div>
     </div>
 
     <script>
-        // Senin Excel dosyanın tam listesi
         const data = {
             "1": {s: "49861", b: 0, a: 0, t: 0}, "2": {s: "71246", b: 0, a: 0, t: 0}, "3": {s: "23583", b: 0, a: 600, t: 600},
             "4": {s: "13675", b: 0, a: 600, t: 600}, "5": {s: "84621", b: 0, a: 600, t: 600}, "6": {s: "74643", b: 0, a: 600, t: 600},
@@ -51,15 +89,23 @@
         for (let i = 1; i <= 31; i++) {
             if(data[i]) {
                 let opt = document.createElement('option');
-                opt.value = i; opt.innerHTML = "Daire " + i;
+                opt.value = i; opt.innerHTML = "Daire No: " + i;
                 select.appendChild(opt);
             }
+        }
+
+        function toggleIban() {
+            const iban = document.getElementById('iban-area');
+            const res = document.getElementById('result');
+            iban.style.display = iban.style.display === "block" ? "none" : "block";
+            res.style.display = "none";
         }
 
         function sorgula() {
             const d = document.getElementById('daireSelect').value;
             const p = document.getElementById('passInput').value;
             const res = document.getElementById('result');
+            document.getElementById('iban-area').style.display = "none";
             
             if (data[d] && data[d].s === p) {
                 res.style.display = "block";
@@ -67,7 +113,7 @@
                     <div class="res-row"><span>🏠 Daire:</span> <b>${d}</b></div>
                     <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data[d].b} TL</b></div>
                     <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data[d].a} TL</b></div>
-                    <div class="res-row total-row"><span>ÖDENECEK:</span> <span>${data[d].t} TL</span></div>
+                    <div class="res-row total-row"><span>TOPLAM:</span> <span>${data[d].t} TL</span></div>
                 `;
             } else {
                 alert("Hatalı şifre veya daire seçimi!");
