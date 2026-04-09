@@ -133,59 +133,55 @@
         }
 
         async function sorgula() {
-            const d = document.getElementById('daireSelect').value;
-            const p = document.getElementById('passInput').value;
-            const res = document.getElementById('result');
-            const btn = document.getElementById('queryBtn');
-            const ibanArea = document.getElementById('iban-area');
-            
-            if(!d || !p) { 
-                alert("Lütfen daire seçin ve şifrenizi girin."); 
-                return; 
+    const d = document.getElementById('daireSelect').value;
+    const p = document.getElementById('passInput').value;
+    const res = document.getElementById('result');
+    const btn = document.getElementById('queryBtn');
+    
+    if(!d || !p) { alert("Lütfen daire seçin ve şifrenizi girin."); return; }
+
+    btn.disabled = true;
+    btn.innerText = "Bağlanıyor...";
+
+    // URL'nin sonuna her seferinde farklı bir sayı ekleyerek "önbellek" (cache) sorununu aşalım
+    const cacheBuster = "&cb=" + new Date().getTime();
+    const baseURL = 'BURAYA_GOOGLE_SCRIPT_URL_GELECEK'; 
+    const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}${cacheBuster}`;
+
+    try {
+        const response = await fetch(scriptURL, {
+            method: 'GET',
+            // Google'ın yönlendirmelerini aşmak için 'follow' şart
+            redirect: 'follow', 
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
             }
+        });
 
-            // Arayüzü kilitle
-            btn.disabled = true;
-            btn.innerText = "Sorgulanıyor...";
-            res.style.display = "none";
-            ibanArea.style.display = "none";
+        // Eğer cevap gelirse ama boşsa veya hata koduysa
+        if (!response.ok) throw new Error('Sunucu yanıt vermedi.');
 
-            try {
-                // BURASI ÖNEMLİ: Her yeni dağıtımda aldığın güncel URL'yi buraya yapıştır
-                const baseURL = 'https://script.google.com/macros/s/AKfycbyaz-i_70I31yBU8qMuPL3l-Idllu8LbM5gcu22M-pef1JQVIrzCUs-YdeDT40QgdIX/exec';
-                const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}`;
+        const data = await response.json();
 
-                // Google Apps Script için özel fetch ayarları
-                const response = await fetch(scriptURL, {
-                    method: 'GET',
-                    mode: 'cors',
-                    redirect: 'follow'
-                });
-
-                if (!response.ok) throw new Error('Ağ hatası oluştu.');
-
-                const data = await response.json();
-
-                if (data.status === "success") {
-                    res.style.display = "block";
-                    res.innerHTML = `
-                        <div class="res-row"><span>🏠 Daire:</span> <b>${data.daire}</b></div>
-                        <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data.borc} TL</b></div>
-                        <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data.aidat} TL</b></div>
-                        <div class="res-row total-row"><span>TOPLAM:</span> <span>${data.toplam} TL</span></div>
-                    `;
-                    res.scrollIntoView({behavior: "smooth"});
-                } else {
-                    alert(data.message || "Hatalı şifre veya daire seçimi!");
-                }
-            } catch (e) {
-                console.error("Detaylı Hata:", e);
-                alert("Veri bağlantısı kurulamadı. Lütfen internetinizi kontrol edin veya daha sonra tekrar deneyin.");
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "SORGULA";
-            }
+        if (data.status === "success") {
+            res.style.display = "block";
+            res.innerHTML = `
+                <div class="res-row"><span>🏠 Daire:</span> <b>${data.daire}</b></div>
+                <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data.borc} TL</b></div>
+                <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data.aidat} TL</b></div>
+                <div class="res-row total-row"><span>TOPLAM:</span> <span>${data.toplam} TL</span></div>
+            `;
+        } else {
+            alert(data.message);
         }
+    } catch (e) {
+        console.error("Hata Detayı:", e);
+        alert("Bağlantı Hatası: Google Script 'Herkes' (Anyone) olarak yayınlanmamış olabilir veya tarayıcı erişimi engelliyor.");
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "SORGULA";
+    }
+}
 
         function toggleIban() {
             const iban = document.getElementById('iban-area');
