@@ -2,15 +2,19 @@ name: Verileri Manuel Guncelle
 on:
   workflow_dispatch:
 
+# Yazma yetkisini açıkça tanımlıyoruz (Code 128 hatasını çözer)
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Depoyu Kontrol Et
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4 # Versiyon güncellendi (Node 24 uyumlu)
 
       - name: Python Kur
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5 # Versiyon güncellendi (Node 24 uyumlu)
         with:
           python-version: '3.9'
 
@@ -26,5 +30,5 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add veriler.json
-          git commit -m "Aidat verileri guncellendi" || echo "Degisiklik yok."
-          git push
+          # Eğer değişiklik yoksa hata vermeden bitir
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Aidat verileri guncellendi" && git push)
