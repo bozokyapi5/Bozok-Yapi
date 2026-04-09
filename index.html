@@ -132,57 +132,42 @@
             select.appendChild(opt);
         }
 
-        async function sorgula() {
+       async function sorgula() {
     const d = document.getElementById('daireSelect').value;
     const p = document.getElementById('passInput').value;
     const res = document.getElementById('result');
     const btn = document.getElementById('queryBtn');
-    
-    if(!d || !p) { alert("Lütfen daire seçin ve şifrenizi girin."); return; }
 
     btn.disabled = true;
-    btn.innerText = "Bağlanıyor...";
-
-    // URL'nin sonuna her seferinde farklı bir sayı ekleyerek "önbellek" (cache) sorununu aşalım
-    const cacheBuster = "&cb=" + new Date().getTime();
-    const baseURL = 'https://script.google.com/macros/library/d/1Hsp1062sIsIXMp9UKcj9Kyqgq-QczVr6ETBK1a2SVrKGnodzwltls6zX/3'; 
-    const scriptURL = `${baseURL}?daire=${encodeURIComponent(d)}&sifre=${encodeURIComponent(p)}${cacheBuster}`;
+    btn.innerText = "Sorgulanıyor...";
 
     try {
-        const response = await fetch(scriptURL, {
-            method: 'GET',
-            // Google'ın yönlendirmelerini aşmak için 'follow' şart
-            redirect: 'follow', 
-            headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
-            }
-        });
-
-        // Eğer cevap gelirse ama boşsa veya hata koduysa
-        if (!response.ok) throw new Error('Sunucu yanıt vermedi.');
-
+        // Artik Google'a degil, kendi dosyamiza bakiyoruz
+        const response = await fetch('veriler.json');
+        if (!response.ok) throw new Error();
         const data = await response.json();
+        
+        // Tablonuzdaki sütun isimlerine göre eşleştirme yapıyoruz
+        const kayit = data.find(item => String(item["Daire No"]).trim() === String(d).trim());
 
-        if (data.status === "success") {
+        if (kayit && String(kayit["Şifre"]).trim() === String(p).trim()) {
             res.style.display = "block";
             res.innerHTML = `
-                <div class="res-row"><span>🏠 Daire:</span> <b>${data.daire}</b></div>
-                <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${data.borc} TL</b></div>
-                <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${data.aidat} TL</b></div>
-                <div class="res-row total-row"><span>TOPLAM:</span> <span>${data.toplam} TL</span></div>
+                <div class="res-row"><span>🏠 Daire:</span> <b>${kayit["Daire No"]}</b></div>
+                <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${kayit["Geçmiş Borç"] || 0} TL</b></div>
+                <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${kayit["Nisan Aidatı"] || 0} TL</b></div>
+                <div class="res-row total-row"><span>TOPLAM:</span> <span>${kayit["Toplam"] || 0} TL</span></div>
             `;
         } else {
-            alert(data.message);
+            alert("Daire veya şifre hatalı!");
         }
     } catch (e) {
-        console.error("Hata Detayı:", e);
-        alert("Bağlantı Hatası: Google Script 'Herkes' (Anyone) olarak yayınlanmamış olabilir veya tarayıcı erişimi engelliyor.");
+        alert("Sistem henüz güncellenmemiş. Lütfen 'Actions' kısmından güncellemeyi başlatın.");
     } finally {
         btn.disabled = false;
         btn.innerText = "SORGULA";
     }
 }
-
         function toggleIban() {
             const iban = document.getElementById('iban-area');
             const res = document.getElementById('result');
