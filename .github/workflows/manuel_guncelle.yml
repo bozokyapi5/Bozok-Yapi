@@ -29,4 +29,5 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add veriler.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Aidat verileri guncellendi" && git push)
+          # Değişiklik varsa: Önce buluttaki son halini çek (rebase), sonra yükle
+          git diff --quiet && git diff --staged --quiet || (git pull --rebase origin main && git commit -m "Aidat verileri guncellendi" && git push)
