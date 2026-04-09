@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
     <style>
-        /* Sayfanın yukarıdan başlaması ve ekrana sığması için düzenleme */
+        /* Tüm sayfayı saran saydam gri kalın çerçeve ve dikey düzenleme */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             background-color: #f4f7f9; 
@@ -15,28 +15,29 @@
             justify-content: flex-start; 
             min-height: 100vh; 
             margin: 0; 
-            padding: 15px 10px; /* Kenar boşlukları optimize edildi */
+            padding: 30px 15px; /* Dikey boşluk %20 seviyesine çekildi */
             box-sizing: border-box;
+            border: 12px solid rgba(128, 128, 128, 0.1); /* Saydam gri kalın çerçeve */
         }
         
         .card { 
             background: white; 
-            padding: 25px 20px; /* İç boşluk %10 seviyesine çekildi */
+            padding: 35px 25px; /* İç boşluklar %20 seviyesine çekildi */
             border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08); 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
-        h2 { color: #2c3e50; margin-bottom: 5px; font-size: 22px; }
-        .sub-title { color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
+        h2 { color: #2c3e50; margin-bottom: 6px; font-size: 24px; }
+        .sub-title { color: #7f8c8d; font-size: 15px; margin-bottom: 25px; }
         
         select, input { 
             width: 100%; 
-            padding: 14px; /* %10 oranında küçültüldü */
-            margin: 8px 0; 
+            padding: 16px; 
+            margin: 10px 0; 
             border: 2px solid #edf2f7; 
             border-radius: 12px; 
             font-size: 16px; 
@@ -48,7 +49,7 @@
         
         button { 
             width: 100%; 
-            padding: 15px; 
+            padding: 16px; 
             background-color: #3498db; 
             color: white; 
             border: none; 
@@ -56,16 +57,16 @@
             font-size: 17px; 
             font-weight: bold; 
             cursor: pointer; 
-            margin-top: 10px; 
+            margin-top: 12px; 
             transition: 0.2s; 
         }
         button:active { transform: scale(0.98); }
         
-        .iban-btn { background-color: #2ecc71; margin-top: 8px; font-size: 14px; padding: 12px; }
+        .iban-btn { background-color: #2ecc71; margin-top: 10px; font-size: 14px; padding: 13px; }
         
         #result, #iban-area { 
-            margin-top: 20px; 
-            padding: 18px; 
+            margin-top: 25px; 
+            padding: 20px; 
             border-radius: 12px; 
             text-align: left; 
             display: none; 
@@ -74,22 +75,24 @@
             animation: fadeIn 0.4s ease-out; 
         }
         
-        .res-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
-        .total-row { border-top: 2px solid #e2e8f0; margin-top: 10px; padding-top: 10px; color: #e74c3c; font-weight: bold; font-size: 18px; }
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 15px; }
+        .total-row { border-top: 2px solid #e2e8f0; margin-top: 12px; padding-top: 12px; color: #e74c3c; font-weight: bold; font-size: 19px; }
         
+        /* Uyarılar Bölümü: Çift taraflı kırmızı çerçeve */
         .warnings { 
             width: 100%;
             max-width: 400px;
             text-align: left; 
             background: #fff5f5; 
-            padding: 15px; 
+            padding: 18px; 
             border-radius: 15px; 
             border-left: 5px solid #e74c3c; 
+            border-right: 5px solid #e74c3c; /* Sağ tarafa eklenen çerçeve */
             box-sizing: border-box;
-            margin-top: 5px;
+            margin-top: 10px;
         }
-        .warnings h4 { margin: 0 0 8px 0; color: #c0392b; font-size: 15px; }
-        .warnings ul { margin: 0; padding-left: 18px; font-size: 13px; color: #444; line-height: 1.5; }
+        .warnings h4 { margin: 0 0 10px 0; color: #c0392b; font-size: 16px; }
+        .warnings ul { margin: 0; padding-left: 20px; font-size: 13px; color: #444; line-height: 1.6; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
