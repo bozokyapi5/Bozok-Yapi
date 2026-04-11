@@ -7,7 +7,7 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f4f7f9; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding: 15px 10px; box-sizing: border-box; }
         .card { background: white; padding: 25px 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; margin-bottom: 15px; }
-        h2 { color: #2c3e50; margin-bottom: 5px; font-size: 22px; }
+        h2 { color: #2c3e50; margin-bottom: 5px; font-size: 22px; letter-spacing: 1px; }
         .sub-title { color: #7f8c8d; font-size: 14px; margin-bottom: 20px; }
         select, input { width: 100%; padding: 14px; margin: 8px 0; border: 2px solid #edf2f7; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; -webkit-appearance: none; }
         select:focus, input:focus { border-color: #3498db; }
@@ -26,7 +26,7 @@
 </head>
 <body>
     <div class="card">
-        <h2>Bozok Yapı</h2>
+        <h2>BOZOK YAPI</h2>
         <div class="sub-title">Nisan 2026 Aidat Sorgulama</div>
         <select id="daireSelect"><option value="">Dairenizi Seçin</option></select>
         <input type="password" id="passInput" placeholder="Size Özel Şifre" inputmode="numeric">
@@ -48,7 +48,7 @@
             <li>Ortak alanlara ve bahçeye çöp atmayınız.</li>
             <li>Yangın merdivenlerine eşya koymayınız.</li>
             <li>Otopark yer önceliğine dikkat ediniz.</li>
-            <li>Aidatlar her ayın 15'ine kadar ödenmelidir.</li>
+            <li>Aidatlar her ayın 18'ine kadar ödenmelidir.</li>
         </ul>
     </div>
     <script>
@@ -80,7 +80,7 @@
                     <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${cozu_b64(data[k].b)} TL</b></div>
                     <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${cozu_b64(data[k].a)} TL</b></div>
                     <div class="res-row total-row"><span>TOPLAM ÖDENECEK TUTAR:</span> <span>${cozu_b64(data[k].t)} TL</span></div>
-                    <div class="info-note">* 4 Mayıs'a kadar yapılan ödemeleri kapsar.</div>
+                    <div class="info-note">* 4 Nisan'a kadar yapılan ödemeleri kapsar.</div>
                 `;
             } else { alert("Hatalı şifre veya daire seçimi!"); }
         }
