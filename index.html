@@ -16,7 +16,8 @@
         .iban-btn { background-color: #2ecc71; margin-top: 8px; font-size: 14px; padding: 12px; }
         #result, #iban-area { margin-top: 20px; padding: 18px; border-radius: 12px; text-align: left; display: none; background: #f8fafc; border: 1px solid #e2e8f0; animation: fadeIn 0.4s ease-out; }
         .res-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 15px; }
-        .total-row { border-top: 2px solid #e2e8f0; margin-top: 10px; padding-top: 10px; color: #e74c3c; font-weight: bold; font-size: 18px; }
+        .total-row { border-top: 2px solid #e2e8f0; margin-top: 10px; padding-top: 10px; color: #e74c3c; font-weight: bold; font-size: 16px; }
+        .info-note { font-size: 12px; color: #7f8c8d; margin-top: 8px; text-align: right; font-style: italic; }
         .warnings { width: 100%; max-width: 400px; text-align: left; background: #fff5f5; padding: 15px; border-radius: 15px; border: 5px solid #e74c3c; box-sizing: border-box; margin-top: 5px; }
         .warnings h4 { margin: 0 0 8px 0; color: #c0392b; font-size: 15px; }
         .warnings ul { margin: 0; padding-left: 18px; font-size: 13px; color: #444; line-height: 1.5; }
@@ -25,14 +26,13 @@
 </head>
 <body>
     <div class="card">
-        <h2>BOZOK YAPI</h2>
+        <h2>Bozok Yapı</h2>
         <div class="sub-title">Nisan 2026 Aidat Sorgulama</div>
         <select id="daireSelect"><option value="">Dairenizi Seçin</option></select>
         <input type="password" id="passInput" placeholder="Size Özel Şifre" inputmode="numeric">
         <button onclick="sorgula()">SORGULA</button>
         <button class="iban-btn" onclick="toggleIban()">ÖDEME BİLGİLERİ (IBAN)</button>
         <div id="iban-area">
-            <div style="font-weight: bold; color: #27ae60; margin-bottom: 5px;">Bozok Yapı Yönetimi</div>
             <div style="font-size: 13px; line-height: 1.6;">
                 <b>IBAN:</b> TR49 0001 0040 3362 5120 5150 09<br>
                 <b>Alıcı:</b> AYHAN GÖKKAYA (Ziraat Bankası)<br>
@@ -42,27 +42,23 @@
         <div id="result"></div>
     </div>
     <div class="warnings">
-        <h4>📢 Önemli Uyarılar</h4>
+        <h4>📢 Genel Duyurular</h4>
         <ul>
             <li>Komşularınızı rahatsız edecek gürültüden kaçınınız.</li>
             <li>Ortak alanlara ve bahçeye çöp atmayınız.</li>
             <li>Yangın merdivenlerine eşya koymayınız.</li>
             <li>Otopark yer önceliğine dikkat ediniz.</li>
-            <li>Aidatlar her ayın 18'ine kadar ödenmelidir.</li>
+            <li>Aidatlar her ayın 15'ine kadar ödenmelidir.</li>
         </ul>
     </div>
     <script>
         const data = {"MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "NQ==": {"s": "ODQ2MjE=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTI=": {"s": "NDUyMTY=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTY=": {"s": "NTg5MzQ=", "b": "NjAw", "a": "NjAw", "t": "MTIwMA=="}, "MTc=": {"s": "NDU4Nzk=", "b": "MTMwMA==", "a": "NjAw", "t": "MTkwMA=="}, "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MjI=": {"s": "NDc5NjI=", "b": "NjAw", "a": "NjAw", "t": "MTIwMA=="}, "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "NjAw", "t": "MTIwMA=="}, "MjQ=": {"s": "Njg3NDY=", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="}, "MjU=": {"s": "Nzk4MjU=", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="}, "MjY=": {"s": "OTYxNDg=", "b": "NjAw", "a": "NjAw", "t": "MTIwMA=="}, "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "Mjg=": {"s": "OTY1MTI=", "b": "MjgwMA==", "a": "NjAw", "t": "MzQwMA=="}, "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MzA=": {"s": "NjU0NTM=", "b": "MjMwMA==", "a": "NjAw", "t": "MjkwMA=="}, "MzE=": {"s": "NzM1OTE=", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="}};
         const select = document.getElementById('daireSelect');
-        
-        // Gizli veriyi çözmek için yardımcı fonksiyon
         const cozu_b64 = (str) => decodeURIComponent(escape(window.atob(str)));
 
-        // Daireleri sıralayıp listeye ekle
         Object.keys(data).sort((a,b) => parseInt(cozu_b64(a)) - parseInt(cozu_b64(b))).forEach(key => {
             let opt = document.createElement('option');
-            opt.value = key; 
-            opt.innerHTML = "Daire No: " + cozu_b64(key);
+            opt.value = key; opt.innerHTML = "Daire No: " + cozu_b64(key);
             select.appendChild(opt);
         });
 
@@ -83,7 +79,8 @@
                     <div class="res-row"><span>🏠 Daire:</span> <b>${cozu_b64(k)}</b></div>
                     <div class="res-row"><span>💰 Geçmiş Borç:</span> <b>${cozu_b64(data[k].b)} TL</b></div>
                     <div class="res-row"><span>📅 Nisan Aidatı:</span> <b>${cozu_b64(data[k].a)} TL</b></div>
-                    <div class="res-row total-row"><span>TOPLAM:</span> <span>${cozu_b64(data[k].t)} TL</span></div>
+                    <div class="res-row total-row"><span>TOPLAM ÖDENECEK TUTAR:</span> <span>${cozu_b64(data[k].t)} TL</span></div>
+                    <div class="info-note">* 4 Mayıs'a kadar yapılan ödemeleri kapsar.</div>
                 `;
             } else { alert("Hatalı şifre veya daire seçimi!"); }
         }
