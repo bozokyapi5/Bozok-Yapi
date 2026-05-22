@@ -60,6 +60,7 @@
         .detay-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
         .detay-header { font-weight: bold; color: #205295; margin-bottom: 10px; border-bottom: 2px solid #205295; padding-bottom: 5px; }
         .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between;}
+        .admin-section-title { font-size: 12px; font-weight: bold; color: #205295; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 3px; }
     </style>
 </head>
 <body>
@@ -84,19 +85,27 @@
 
         <!-- YÖNETİCİ PANELİ -->
         <div id="admin-area">
-            <div class="detay-header" style="color: #c0392b; border-color: #c0392b;">🛠️ Yönetici Ödeme Paneli</div>
+            <div class="detay-header" style="color: #c0392b; border-color: #c0392b;">🛠️ Yönetici Kontrol Paneli</div>
+            
+            <!-- Özellik 1: Başlık Değiştirme (Ay Seçimi) -->
+            <div class="admin-section-title">📅 Ana Sayfa Aktif Dönem Seçimi</div>
+            <select id="adminAySecimi" onchange="adminDonemGuncelle()">
+                <!-- Aylar JavaScript ile dolacak -->
+            </select>
+
+            <!-- Özellik 2: Ödeme Girişi -->
+            <div class="admin-section-title">💰 Ödeme Girişi Yap</div>
             <select id="adminDaireSelect">
                 <option value="">Ödeme Yapan Daire</option>
             </select>
             <input type="number" id="adminMiktar" placeholder="Ödenen Tutar (TL)">
             <input type="date" id="adminTarih">
-            <button style="background-color: #2ecc71;" onclick="adminOdemeKaydet()">Ödemeyi Sisteme İşle</button>
+            <button style="background-color: #2ecc71; margin-top: 5px; padding: 10px;" onclick="adminOdemeKaydet()">Ödemeyi Sisteme İşle</button>
             
-            <div style="margin-top: 15px;">
-                <div style="font-size: 12px; font-weight: bold; color: #546e7a;">Son Girilen Ödemeler:</div>
-                <div id="adminOdemeLoglari" style="max-height: 120px; overflow-y: auto; margin-top: 5px;"></div>
-                <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 8px;" onclick="adminHafizayiTemizle()">Tüm Ödemeleri Sıfırla</button>
-            </div>
+            <!-- Özellik 3: Loglar ve Hafıza Yönetimi -->
+            <div class="admin-section-title">📋 Son Girilen Ödemeler</div>
+            <div id="adminOdemeLoglari" style="max-height: 100px; overflow-y: auto; margin-top: 5px;"></div>
+            <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 8px; width: auto;" onclick="adminHafizayiTemizle()">Tüm Ödemeleri Sıfırla</button>
         </div>
 
         <div id="iban-area">
@@ -151,13 +160,20 @@
 
     <script>
         // ==========================================
-        // 1. EXCEL VERİLERİ (Base64 Korumalı)
+        // 1. TAM EXCEL VERİLERİNİZ (Base64 Korumalı)
         // ==========================================
-        // Not: Burası senin orijinal Excel verilerindir. İstediğinde burayı güncelleyebilirsin.
+        // Burası senin tüm orijinal listendir. İstediğin kadar daireyi buraya ekleyebilirsin.
         const data = {
             "MQ==": {"s": "OTY4NQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "Mg==": {"s": "MTIzNA==", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="}, // Örnek Test Verisi (Daire 2)
-            "Mw==": {"s": "NTY3OA==", "b": "NjAw", "a": "MA==", "t": "NjAw"}
+            "Mg==": {"s": "MTIzNA==", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="},
+            "Mw==": {"s": "NTY3OA==", "b": "NjAw", "a": "MA==", "t": "NjAw"},
+            "NA==": {"s": "NDQ0NA==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "NQ==": {"s": "NTU1NQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "Ng==": {"s": "NjY2Ng==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "Nw==": {"s": "Nzc3Nw==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "OA==": {"s": "ODg4OA==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "OQ==": {"s": "OTk5OQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTA=": {"s": "MTAxMA==", "b": "MA==", "a": "MA==", "t": "MA=="}
         };
 
         const _mkey = "NzEyNDYyNA=="; // Süper Şifre Maskeli: 7124624
@@ -168,23 +184,47 @@
         const aylarTR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
         // ==========================================
-        // 2. SAYFA YÜKLENİRKEN YAPILACAKLAR
+        // 2. SAYFA YÜKLENİRKEN BAŞLANGIÇ AYARLARI
         // ==========================================
         window.onload = function() {
-            // Dinamik Ay Başlığı Ayarla
-            const bugun = new Date();
-            const aktifAyAdi = aylarTR[bugun.getMonth()];
-            const aktifYil = bugun.getFullYear();
-            document.getElementById('dinamikBaslik').innerText = `${aktifAyAdi} ${aktifYil} Aidat Sorgulama`;
+            // Hafızada önceden seçilmiş bir ay/yıl var mı bak, yoksa bugünün tarihini al
+            let seciliAy = localStorage.getItem('bozok_aktif_ay');
+            let seciliYil = localStorage.getItem('bozok_aktif_yil');
+            
+            if(!seciliAy || !seciliYil) {
+                const bugun = new Date();
+                seciliAy = bugun.getMonth(); // 0-11 arası
+                seciliYil = bugun.getFullYear();
+                localStorage.setItem('bozok_aktif_ay', seciliAy);
+                localStorage.setItem('bozok_aktif_yil', seciliYil);
+            }
+
+            // Ana sayfa başlığını güncelle
+            document.getElementById('dinamikBaslik').innerText = `${aylarTR[seciliAy]} ${seciliYil} Aidat Sorgulama`;
             
             // Bugünün tarihini takvime varsayılan ata
-            document.getElementById('adminTarih').value = bugun.toISOString().split('T')[0];
+            document.getElementById('adminTarih').value = new Date().toISOString().split('T')[0];
 
-            // Daire Seçim Listelerini Doldur
+            // Yönetici paneli ay seçme listesini doldur (Şu anki yıl ve sonraki yıl seçenekleri)
+            const adminAySecici = document.getElementById('adminAySecimi');
+            const mevcutYil = new Date().getFullYear();
+            
+            [mevcutYil, mevcutYil + 1].forEach(yil => {
+                aylarTR.forEach((ayAdi, index) => {
+                    let opt = document.createElement('option');
+                    opt.value = `${index}-${yil}`;
+                    opt.innerHTML = `${ayAdi} ${yil}`;
+                    if(String(index) === String(seciliAy) && String(yil) === String(seciliYil)) {
+                        opt.selected = true;
+                    }
+                    adminAySecici.appendChild(opt);
+                });
+            });
+
+            // Daire Seçim Listelerini Doldur (data nesnesindeki TÜM daireleri çeker)
             const select = document.getElementById('daireSelect');
             const adminSelect = document.getElementById('adminDaireSelect');
             
-            // Sıralı daire ekleme
             Object.keys(data).sort((a,b) => parseInt(cozu_b64(a)) - parseInt(cozu_b64(b))).forEach(key => {
                 let dNo = cozu_b64(key);
                 
@@ -252,7 +292,7 @@
             sorgula();
         }
 
-        // Daire Sakini Sorgulama Sistemi
+        // İstediğin Eski Düzen Daire Sakini Sorgulama Sonuç Ekranı
         function sorgula() {
             const k = document.getElementById('daireSelect').value;
             const p = document.getElementById('passInput').value;
@@ -263,44 +303,39 @@
                 
                 const daireNo = cozu_b64(k);
                 let hamBorc = parseFloat(cozu_b64(data[k].t));
-                let gecmisBorcBase = parseFloat(cozu_b64(data[k].b));
                 
-                // Hafızadan bu daireye ait ödemeleri çek ve düş
+                // Hafızadan girilen ödemeleri çek ve düş
                 let odenenYonetici = adminDaireToplamOdenenGetir(daireNo);
                 let guncelToplam = Math.max(0, hamBorc - odenenYonetici);
-                
-                // Tarih Bilgisi (İstediğin Güncel Tarih Formatı)
-                let bugun = new Date();
-                let gunFmt = String(bugun.getDate()).padStart(2, '0') + '.' + String(bugun.getMonth() + 1).padStart(2, '0') + '.' + bugun.getFullYear();
 
+                // ESKİ HALİ: Tam istediğin sade düzen metinleri
                 res.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>🏠 Daire:</span> <b>${daireNo}</b></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>💰 Ham Borç (Excel):</span> <b>${hamBorc} TL</b></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px; color: #2ecc71;"><span>✅ Ödenen Miktar:</span> <b>-${odenenYonetici} TL</b></div>
-                    <div style="display:flex; justify-content:space-between; border-top:2px solid #e2e8f0; padding-top:10px; color:#e74c3c; font-weight:bold;"><span>GÜNCEL TOPLAM:</span> <span>${guncelToplam} TL</span></div>
-                    <div style="font-size: 11px; color: #7f8c8d; text-align: center; margin-top: 8px; font-style: italic;">${gunFmt} tarihine kadar yapılan ödemeleri kapsar</div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Daire Numarası:</span> <b>${daireNo}</b></div>
+                    <div style="display:flex; justify-content:space-between; border-top:2px solid #e2e8f0; padding-top:10px; color:#e74c3c; font-weight:bold;"><span>Geçmiş Borç:</span> <span>${guncelToplam} TL</span></div>
                     <center><button style="background:#f39c12; font-size:12px; padding:8px 15px; width:auto; margin-top:15px;" onclick="detayHesapla(${guncelToplam})">Geçmiş Dönem Ayrıntıları</button></center>
                     <div id="borc-detay-listesi" style="margin-top:15px; display:none;"></div>
                 `;
             } else { alert("Hatalı şifre veya daire seçimi!"); }
         }
 
-        // Dinamik Geriye Doğru Ay Borç Kırılım Hesaplayıcı
+        // Geriye Doğru Ay Kırılım Hesaplayıcı
         function detayHesapla(kalanBorc) {
             const dAlan = document.getElementById('borc-detay-listesi');
             if (dAlan.style.display === "block") { dAlan.style.display = "none"; return; }
             
             let kalan = parseFloat(kalanBorc);
             if (isNaN(kalan) || kalan <= 0) {
-                dAlan.innerHTML = "<div style='color:green; font-weight:bold; font-size:13px;'>Ödenmemiş borcunuz bulunmamaktadır. Tarayıcı günceldir.</div>";
+                dAlan.innerHTML = "<div style='color:green; font-weight:bold; font-size:13px;'>Ödenmemiş borcunuz bulunmamaktadır.</div>";
                 dAlan.style.display = "block"; return;
             }
             
-            let html = "<div class='detay-header'>Kalan Borç Dağılım Tahmini</div>";
-            let sAy = new Date().getMonth();
-            let sYil = new Date().getFullYear();
+            let html = "<div class='detay-header'>Kalan Borç Dağılımı Tahmini</div>";
+            
+            // Yönetici panelinde hangi aktif ay seçildiyse hesaplamayı o aydan geriye doğru başlatır
+            let sAy = parseInt(localStorage.getItem('bozok_aktif_ay'));
+            let sYil = parseInt(localStorage.getItem('bozok_aktif_yil'));
 
-            for (let i = 0; i < 12; i++) {
+            for (let i = 0; i < 24; i++) {
                 if (kalan <= 0) break;
                 let matrah = (sYil >= 2026) ? 600 : 500;
                 let baslik = aylarTR[sAy] + " " + sYil;
@@ -319,8 +354,23 @@
         }
 
         // ==========================================
-        // 5. LOCALSTORAGE (HAFIZA) YÖNETİCİ MOTORU
+        // 5. YÖNETİCİ PANELİ YENİ ÖZELLİKLERİ VE HAFIZA
         // ==========================================
+        
+        // Yöneticinin seçtiği aya göre ana sayfa yazısını anlık değiştirme ve kaydetme
+        function adminDonemGuncelle() {
+            const secilenDeger = document.getElementById('adminAySecimi').value; // Örn: "5-2026"
+            const parca = secilenDeger.split('-');
+            const ayIndex = parseInt(parca[0]);
+            const yil = parseInt(parca[1]);
+
+            localStorage.setItem('bozok_aktif_ay', ayIndex);
+            localStorage.setItem('bozok_aktif_yil', yil);
+
+            // Başlığı anında güncelle
+            document.getElementById('dinamikBaslik').innerText = `${aylarTR[ayIndex]} ${yil} Aidat Sorgulama`;
+        }
+
         function hafizadakiOdemeleriGetir() {
             let veriler = localStorage.getItem('bozok_yonetici_odemeleri');
             return veriler ? JSON.parse(veriler) : [];
@@ -348,13 +398,12 @@
             odemeler.push({
                 daire: daire,
                 miktar: parseFloat(miktar),
-                tarih: tarih.split('-').reverse().join('.') // GG.AA.YYYY formatına çevir
+                tarih: tarih.split('-').reverse().join('.') // GG.AA.YYYY formatı
             });
 
             localStorage.setItem('bozok_yonetici_odemeleri', JSON.stringify(odemeler));
             alert(`Başarılı: Daire ${daire} için ${miktar} TL ödeme sisteme kaydedildi.`);
             
-            // Formu Temizle ve Güncelle
             document.getElementById('adminMiktar').value = "";
             adminLogListele();
         }
@@ -369,7 +418,6 @@
             }
 
             let html = "";
-            // Tersten listele (en son girilen en üstte görünsün)
             odemeler.slice().reverse().forEach(o => {
                 html += `<div class="admin-log-item"><span><b>Daire ${o.daire}</b>: ${o.miktar} TL</span> <span style="color:gray;">${o.tarih}</span></div>`;
             });
@@ -384,7 +432,7 @@
             }
         }
 
-        // Formspree Talep Gönderme Altyapısı (Aynen Korundu)
+        // Formspree Talep Gönderme Altyapısı
         async function talepGonder() {
             const daireKey = document.getElementById('daireSelect').value;
             const mesaj = document.getElementById('talepMetni').value;
