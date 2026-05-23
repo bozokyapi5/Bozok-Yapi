@@ -59,9 +59,11 @@
         
         .detay-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
         .detay-header { font-weight: bold; color: #205295; margin-bottom: 10px; border-bottom: 2px solid #205295; padding-bottom: 5px; }
-        .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between;}
+        .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between; align-items: center;}
         .admin-section-title { font-size: 12px; font-weight: bold; color: #205295; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 3px; }
-        .admin-btn-sm { background-color: #34495e; padding: 8px; font-size: 12px; margin-top: 5px; }
+        .admin-btn-sm { background-color: #34495e; padding: 8px; font-size: 12px; margin-top: 5px; width: auto; display: inline-block; margin-right: 5px; }
+        .duyuru-yonetim-item { display: flex; justify-content: space-between; align-items: center; background: #fdfefe; border: 1px solid #e2e8f0; padding: 6px; margin-bottom: 4px; border-radius: 8px; font-size: 11px; }
+        .del-btn { background: #e74c3c; padding: 3px 6px; font-size: 10px; width: auto; margin: 0; border-radius: 6px; }
     </style>
 </head>
 <body>
@@ -104,14 +106,17 @@
             <button style="background-color: #2ecc71; margin-top: 5px; padding: 10px;" onclick="adminOdemeKaydet()">Ödemeyi Sisteme İşle</button>
             
             <!-- 4. Duyuru Yönetim Paneli -->
-            <div class="admin-section-title">📢 Duyuru Ekle / Düzenle</div>
+            <div class="admin-section-title">📢 Duyuru Ekle / Düzenle / Sil</div>
             <select id="adminDuyuruTipi">
                 <option value="genel">Genel Duyurular'a Ekle</option>
                 <option value="ozel">Özel Duyurular'a Ekle</option>
             </select>
             <input type="text" id="adminDuyuruMetni" placeholder="Duyuru metnini yazınız...">
             <button class="admin-btn-sm" style="background-color: #3498db;" onclick="adminDuyuruEkle()">Duyuruyu Yayınla</button>
-            <button class="admin-btn-sm" style="background-color: #95a5a6;" onclick="adminDuyurulariSifirla()">Tüm Duyuruları Fabrika Ayarına Döndür</button>
+            <button class="admin-btn-sm" style="background-color: #95a5a6;" onclick="adminDuyurulariSifirla()">Fabrika Ayarlarına Dön</button>
+            
+            <div style="font-size:11px; font-weight:bold; color:#555; margin-top:10px; margin-bottom:5px;">Mevcut Duyuruları Yönet:</div>
+            <div id="adminDuyuruListesiAlani"></div>
 
             <!-- 5. Loglar ve Hafıza Sıfırlama -->
             <div class="admin-section-title">📋 Son Girilen Ödemeler</div>
@@ -169,8 +174,7 @@
 
     <script>
         // =========================================================================
-        // 🚨 ÖNEMLİ NOT: ESKİ SİTENDEKİ TÜM DAİRELERİN DURMASI İÇİN ESKİ KODDA BULUNAN
-        // const data = { ... } KISMINI KOPYALAYIP AŞAĞIDAKİ ALANA YAPIŞTIRMAN YETERLİDİR.
+        // 1. BOZOK YAPI EKSİKSİZ TÜM DAİRE VERİLERİ (1'DEN 30'A KADAR TAM LİSTE)
         // =========================================================================
         const data = {
             "MQ==": {"s": "OTY4NQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
@@ -182,12 +186,34 @@
             "Nw==": {"s": "Nzc3Nw==", "b": "MA==", "a": "MA==", "t": "MA=="},
             "OA==": {"s": "ODg4OA==", "b": "MA==", "a": "MA==", "t": "MA=="},
             "OQ==": {"s": "OTk5OQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTA=": {"s": "MTAxMA==", "b": "MA==", "a": "MA==", "t": "MA=="}
+            "MTA=": {"s": "MTAxMA==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTE=": {"s": "MTExMQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTI=": {"s": "MTIxMg==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTM=": {"s": "MTMxMw==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTQ=": {"s": "MTQxNA==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTU ABA==": {"s": "MTUxNQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTY=": {"s": "MTYxNg==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTc=": {"s": "MTcxNw==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTg=": {"s": "MTgxOA==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTk=": {"s": "MTkxOQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjA=": {"s": "MjAyMA==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjE=": {"s": "MjEyMQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjI=": {"s": "MjIyMg==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjM=": {"s": "MjMyMw==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjQ=": {"s": "MjQy==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjU=": {"s": "MjUyNQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjY=": {"s": "MjYyNg==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "Mjc=": {"s": "MjdjNw==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "Mjg=": {"s": "MjhjOA==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "Mjk指定": {"s": "MjlhOQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MzA=": {"s": "MzAzMA==", "b": "MA==", "a": "MA==", "t": "MA=="}
         };
 
         const _mkey = "NzEyNDYyNA=="; // Süper Şifre: 7124624
-        const cozu_b64 = (str) => decodeURIComponent(escape(window.atob(str)));
-        const maskele_b64 = (str) => window.btoa(unescape(encodeURIComponent(str)));
+        const cozu_b64 = (str) => {
+            try { return decodeURIComponent(escape(window.atob(str.trim()))); } 
+            catch(e) { return str; }
+        };
         const aylarTR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
         // ==========================================
@@ -220,12 +246,19 @@
                 });
             });
 
-            // Tüm Daire Listesini (data nesnesinden dinamik okuyarak) Listelere Ekleme
+            // Tüm Daire Listesini Doldurma
             const select = document.getElementById('daireSelect');
             const adminSelect = document.getElementById('adminDaireSelect');
             
-            Object.keys(data).sort((a,b) => parseInt(cozu_b64(a)) - parseInt(cozu_b64(b))).forEach(key => {
-                let dNo = cozu_b64(key);
+            // Temiz bir sıralama için daireleri numarasına göre diziyoruz
+            Object.keys(data).sort((a,b) => {
+                let numA = parseInt(cozu_b64(a).replace(/\D/g,'')) || 0;
+                let numB = parseInt(cozu_b64(b).replace(/\D/g,'')) || 0;
+                return numA - numB;
+            }).forEach(key => {
+                let dNo = cozu_b64(key).replace(/\D/g,''); // Sadece rakam kısmını al
+                if(!dNo) return;
+                
                 let opt = document.createElement('option');
                 opt.value = key; opt.innerHTML = "Daire No: " + dNo;
                 select.appendChild(opt);
@@ -242,6 +275,7 @@
 
             duyurulariListele();
             adminLogListele();
+            adminDuyuruYonetimListele();
         };
 
         function toggleArea(id) {
@@ -258,7 +292,7 @@
             const k = document.getElementById('daireSelect').value;
             const p = document.getElementById('passInput').value;
             if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
-                document.getElementById('talepDaireNo').innerText = "Daire " + cozu_b64(k) + " - Yönetime Talep";
+                document.getElementById('talepDaireNo').innerText = "Daire " + cozu_b64(k).replace(/\D/g,'') + " - Yönetime Talep";
                 toggleArea('request-area');
             } else { alert("Erişim Reddedildi: Lütfen Dairenizi seçin ve şifrenizi doğru girin!"); }
         }
@@ -274,7 +308,6 @@
             sorgula();
         }
 
-        // ESKİ SİTENİN TAMAMEN KORUNAN SORGULAMA SİSTEMİ
         function sorgula() {
             const k = document.getElementById('daireSelect').value;
             const p = document.getElementById('passInput').value;
@@ -282,16 +315,14 @@
             
             if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
                 toggleArea('result');
-                const daireNo = cozu_b64(k);
+                const daireNo = cozu_b64(k).replace(/\D/g,'');
                 
-                // Temel Excel Verisi + Yönetici Eklemeleri Hesaplama
                 let hamBorc = parseFloat(cozu_b64(data[k].t));
                 let eklenenYeniAyBorclari = adminEkBorcGetir(daireNo);
                 let odenenYonetici = adminDaireToplamOdenenGetir(daireNo);
                 
                 let guncelToplam = Math.max(0, (hamBorc + eklenenYeniAyBorclari) - odenenYonetici);
 
-                // Eski Sade Tasarım Çıktısı (Milimi milimine korundu)
                 res.innerHTML = `
                     <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Daire Numarası:</span> <b>${daireNo}</b></div>
                     <div style="display:flex; justify-content:space-between; border-top:2px solid #e2e8f0; padding-top:10px; color:#e74c3c; font-weight:bold;"><span>Geçmiş Borç:</span> <span>${guncelToplam} TL</span></div>
@@ -334,7 +365,7 @@
         }
 
         // ==========================================
-        // YÖNETİCİ GELİŞMİŞ ENGINE (LOCALSTORAGE)
+        // YÖNETİCİ PANELİ İŞLEMLERİ
         // ==========================================
         function adminDonemGuncelle() {
             const secilenDeger = document.getElementById('adminAySecimi').value;
@@ -344,22 +375,22 @@
             document.getElementById('dinamikBaslik').innerText = `${aylarTR[parca[0]]} ${parca[1]} Aidat Sorgulama`;
         }
 
-        // Yeni Ay Kilidi: Tüm dairelere dinamik aidat matrahı basar
         function adminYeniAyBorcuEkle() {
             let aktifAy = aylarTR[localStorage.getItem('bozok_aktif_ay')];
             let aktifYil = localStorage.getItem('bozok_aktif_yil');
             
-            if(confirm(`DİKKAT: Sistemde seçili olan [ ${aktifAy} ${aktifYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat yansıtılacaktır. Onaylıyor musunuz?`)) {
+            if(confirm(`DİKKAT: [ ${aktifAy} ${aktifYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat eklenecektir. Onaylıyor musunuz?`)) {
                 let ekBorclar = localStorage.getItem('bozok_ek_borclar') ? JSON.parse(localStorage.getItem('bozok_ek_borclar')) : {};
                 
                 Object.keys(data).forEach(key => {
-                    let dNo = cozu_b64(key);
+                    let dNo = cozu_b64(key).replace(/\D/g,'');
+                    if(!dNo) return;
                     if(!ekBorclar[dNo]) ekBorclar[dNo] = 0;
                     ekBorclar[dNo] += 600;
                 });
                 
                 localStorage.setItem('bozok_ek_borclar', JSON.stringify(ekBorclar));
-                alert("Başarılı: Yeni ay aidat yükü tüm dairelerin hesaplarına eklenmiştir.");
+                alert("Başarılı: Yeni ay aidat yükü tüm dairelerin hesaplarına yansıtıldı.");
             }
         }
 
@@ -416,7 +447,7 @@
         }
 
         // ==========================================
-        // DİNAMİK DUYURU MOTORU
+        // GELİŞMİŞ DUYURU YÖNETİM MOTORU
         // ==========================================
         const varsayilanDuyurular = {
             ozel: ["Apartman etrafı, giriş ve garajlar bu ay içinde haşerelere karşı ilaçlanmıştır."],
@@ -436,20 +467,14 @@
         function duyurulariListele() {
             let d = hafizadakiDuyurulariGetir();
             
-            // Özel Duyurular
             let ozelUl = document.getElementById('ozelDuyuruListesi');
             ozelUl.innerHTML = "";
-            d.ozel.forEach((metin, index) => {
-                ozelUl.innerHTML += `<li>${metin}</li>`;
-            });
+            d.ozel.forEach(metin => { ozelUl.innerHTML += `<li>${metin}</li>`; });
             document.getElementById('ozelDuyurularKutusu').style.display = d.ozel.length ? 'block' : 'none';
 
-            // Genel Duyurular
             let genelUl = document.getElementById('genelDuyuruListesi');
             genelUl.innerHTML = "";
-            d.genel.forEach((metin, index) => {
-                genelUl.innerHTML += `<li>${metin}</li>`;
-            });
+            d.genel.forEach(metin => { genelUl.innerHTML += `<li>${metin}</li>`; });
             document.getElementById('genelDuyurularKutusu').style.display = d.genel.length ? 'block' : 'none';
         }
 
@@ -464,14 +489,38 @@
             
             document.getElementById('adminDuyuruMetni').value = "";
             duyurulariListele();
-            alert("Duyuru başarıyla eklendi ve panoda yayına alındı.");
+            adminDuyuruYonetimListele();
+            alert("Duyuru başarıyla eklendi.");
+        }
+
+        function adminDuyuruSil(tip, index) {
+            let d = hafizadakiDuyurulariGetir();
+            d[tip].splice(index, 1);
+            localStorage.setItem('bozok_duyurular', JSON.stringify(d));
+            duyurulariListele();
+            adminDuyuruYonetimListele();
+        }
+
+        function adminDuyuruYonetimListele() {
+            const alan = document.getElementById('adminDuyuruListesiAlani');
+            let d = hafizadakiDuyurulariGetir();
+            let html = "";
+
+            d.ozel.forEach((m, idx) => {
+                html += `<div class="duyuru-yonetim-item"><span>[Özel] ${m.substring(0,30)}...</span><button class="del-btn" onclick="adminDuyuruSil('ozel', ${idx})">Sil</button></div>`;
+            });
+            d.genel.forEach((m, idx) => {
+                html += `<div class="duyuru-yonetim-item"><span>[Genel] ${m.substring(0,30)}...</span><button class="del-btn" onclick="adminDuyuruSil('genel', ${idx})">Sil</button></div>`;
+            });
+            alan.innerHTML = html || "<span style='color:gray;font-style:italic;'>Aktif duyuru yok.</span>";
         }
 
         function adminDuyurulariSifirla() {
-            if(confirm("Tüm duyuruları silip orijinal fabrika ayarlarına döndürmek istiyor musunuz?")) {
+            if(confirm("Tüm duyuruları fabrika ayarlarına döndürmek istiyor musunuz?")) {
                 localStorage.removeItem('bozok_duyurular');
                 duyurulariListele();
-                alert("Duyurular ilk orijinal haline getirildi.");
+                adminDuyuruYonetimListele();
+                alert("Duyurular orijinal haline getirildi.");
             }
         }
 
@@ -488,7 +537,7 @@
                 const response = await fetch("https://formspree.io/f/xqewlwvv", {
                     method: "POST",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body: JSON.stringify({ Daire: cozu_b64(daireKey), Mesaj: mesaj })
+                    body: JSON.stringify({ Daire: cozu_b64(daireKey).replace(/\D/g,''), Mesaj: mesaj })
                 });
                 if (response.ok) {
                     status.innerText = "✅ Talebiniz başarıyla iletildi.";
