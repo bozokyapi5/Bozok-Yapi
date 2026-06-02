@@ -162,72 +162,40 @@
     </div>
 
     <script>
-        // ==========================================================================================
-        // NOT: Sitedeki "Mayıs Ayı Güncel Borç Listesini" aşağıda her dairenin yanındaki 0 değerine yazın.
-        // Sistem bunu arka planda otomatik şifreleyecek, elle Base64 yapmanıza gerek yoktur.
-        // ==========================================================================================
-        const mayisBorclari = {
-            "1": 0,    // VERİ: Daire 1 Mayıs borcu buraya (Örn: 1200)
-            "2": 0,    // VERİ: Daire 2 Mayıs borcu buraya
-            "3": 0,    // VERİ: Daire 3 Mayıs borcu buraya
-            "4": 0,    // VERİ: Daire 4 Mayıs borcu buraya
-            "5": 0,    // VERİ: Daire 5 Mayıs borcu buraya
-            "8": 0,    // VERİ: Daire 8 Mayıs borcu buraya
-            "9": 0,    // VERİ: Daire 9 Mayıs borcu buraya
-            "10": 0,   // VERİ: Daire 10 Mayıs borcu buraya
-            "11": 0,   // VERİ: Daire 11 Mayıs borcu buraya
-            "12": 0,   // VERİ: Daire 12 Mayıs borcu buraya
-            "13": 0,   // VERİ: Daire 13 Mayıs borcu buraya
-            "14": 0,   // VERİ: Daire 14 Mayıs borcu buraya
-            "15": 0,   // VERİ: Daire 15 Mayıs borcu buraya
-            "16": 0,   // VERİ: Daire 16 Mayıs borcu buraya
-            "17": 0,   // VERİ: Daire 17 Mayıs borcu buraya
-            "18": 0,   // VERİ: Daire 18 Mayıs borcu buraya
-            "19": 0,   // VERİ: Daire 19 Mayıs borcu buraya
-            "20": 0,   // VERİ: Daire 20 Mayıs borcu buraya
-            "21": 0,   // VERİ: Daire 21 Mayıs borcu buraya
-            "22": 0,   // VERİ: Daire 22 Mayıs borcu buraya
-            "23": 0,   // VERİ: Daire 23 Mayıs borcu buraya
-            "24": 0,   // VERİ: Daire 24 Mayıs borcu buraya
-            "25": 0,   // VERİ: Daire 25 Mayıs borcu buraya
-            "26": 0,   // VERİ: Daire 26 Mayıs borcu buraya
-            "27": 0,   // VERİ: Daire 27 Mayıs borcu buraya
-            "28": 0,   // VERİ: Daire 28 Mayıs borcu buraya
-            "29": 0,   // VERİ: Daire 29 Mayıs borcu buraya
-            "30": 0,   // VERİ: Daire 30 Mayıs borcu buraya
-            "31": 0    // VERİ: Daire 31 Mayıs borcu buraya
-        };
-
+        // =========================================================================
+        // BOZOK YAPI GÜNCEL DAİRE, ŞİFRE VE MAYIS AYI BORÇ VERİLERİ 
+        // Tüm Şifreler ve Borçlar (t) Base64 Formatında Gömülmüştür
+        // =========================================================================
         const data = {
-            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["1"] || 0))}, 
-            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["2"] || 0))}, 
-            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["3"] || 0))}, 
-            "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["4"] || 0))}, 
-            "NQ==": {"s": "ODQ2MjE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["5"] || 0))}, 
-            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["8"] || 0))}, 
-            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["9"] || 0))}, 
-            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["10"] || 0))}, 
-            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["11"] || 0))}, 
-            "MTI=": {"s": "NDUyMTY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["12"] || 0))}, 
-            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["13"] || 0))}, 
-            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["14"] || 0))}, 
-            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["15"] || 0))}, 
-            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["16"] || 0))}, 
-            "MTc=": {"s": "NDU4Nzk=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["17"] || 0))}, 
-            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["18"] || 0))}, 
-            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["19"] || 0))}, 
-            "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["20"] || 0))}, 
-            "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["21"] || 0))}, 
-            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["22"] || 0))}, 
-            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["23"] || 0))}, 
-            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["24"] || 0))}, 
-            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["25"] || 0))}, 
-            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["26"] || 0))}, 
-            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["27"] || 0))}, 
-            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["28"] || 0))}, 
-            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["29"] || 0))}, 
-            "MzA=": {"s": "NjU0NTM=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["30"] || 0))}, 
-            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["31"] || 0))}
+            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 1 - Borç: 0
+            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 2 - Borç: 0
+            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 3 - Borç: 1200
+            "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 4 - Borç: 600
+            "NQ==": {"s": "ODQ2MjE=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 5 - Borç: 1200
+            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 8 - Borç: 0
+            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 9 - Borç: 0
+            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 10 - Borç: 600
+            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 11 - Borç: 600
+            "MTI=": {"s": "NDUyMTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12 - Borç: 600
+            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 13 - Borç: 0
+            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 14 - Borç: 0
+            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 15 - Borç: 600
+            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "NzAw"},           // Daire 16 - Borç: 700
+            "MTc=": {"s": "NDU4Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},       // Daire 17 - Borç: 1500
+            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 18 - Borç: 0
+            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 19 - Borç: 600
+            "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20 - Borç: 0
+            "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 21 - Borç: 1200
+            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 22 - Borç: 600
+            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 23 - Borç: 600
+            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 24 - Borç: 0
+            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 25 - Borç: 600
+            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 26 - Borç: 600
+            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 27 - Borç: 600
+            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 28 - Borç: 1200
+            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 29 - Borç: 1200
+            "MzA=": {"s": "NjU0NTM=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 30 - Borç: 600
+            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "ODAw"}            // Daire 31 - Borç: 800
         };
 
         const _mkey = "NzEyNDYyNA=="; // Süper Şifre: 7124624
@@ -332,6 +300,7 @@
                 toggleArea('result');
                 const daireNo = cozu_b64(k).replace(/\D/g,'');
                 
+                // SABİT BORÇ (Mayıs Verisi) + EK BORÇ (Haziran, Temmuz vs.) - ÖDENEN (Yönetici Paneli)
                 let hamBorc = parseFloat(cozu_b64(data[k].t)) || 0;
                 let eklenenYeniAyBorclari = adminEkBorcGetir(daireNo);
                 let odenenYonetici = adminDaireToplamOdenenGetir(daireNo);
@@ -402,7 +371,7 @@
                     if(!dNo) return;
                     
                     let eskiEkBorc = ekBorclar[dNo] ? parseFloat(ekBorclar[dNo]) : 0;
-                    ekBorclar[dNo] = eskiEkBorc + 600; // Eski ek borcun ÜZERİNE biriktirerek ekleme yapar
+                    ekBorclar[dNo] = eskiEkBorc + 600;
                 });
                 
                 localStorage.setItem('bozok_ek_borclar', JSON.stringify(ekBorclar));
