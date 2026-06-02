@@ -82,30 +82,24 @@
         <button class="info-btn" onclick="toggleArea('info-area')">APARTMAN ÖZELLİKLERİ</button>
         <button class="announcement-btn" onclick="toggleArea('announcements-area')">DUYURULAR</button>
 
-        <!-- SORGULAMA SONUÇ ALANI -->
         <div id="result"></div>
 
-        <!-- YÖNETİCİ PANELİ -->
         <div id="admin-area" style="max-height: 550px; overflow-y: auto;">
             <div class="detay-header" style="color: #c0392b; border-color: #c0392b;">🛠️ Gelişmiş Yönetici Paneli</div>
             
-            <!-- 1. Başlık ve Dönem Ayarı -->
             <div class="admin-section-title">📅 Ana Sayfa Aktif Dönem Seçimi</div>
             <select id="adminAySecimi" onchange="adminDonemGuncelle()"></select>
 
-            <!-- 2. Yeni Ay Aidat Ekleme -->
             <div class="admin-section-title">➕ Yeni Ay Aidat Matrahı Yansıt</div>
-            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Yeni aya girildiğinde tüm dairelere tek tıkla +600 TL borç ekler ve eskilerin üzerine biriktirir.</p>
+            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Yeni aya girildiğinde tüm dairelere tek tıkla +600 TL borç ekler ve eski verileri bozmadan üzerine biriktirir.</p>
             <button class="admin-btn-sm" style="background-color: #e67e22;" onclick="adminYeniAyBorcuEkle()">Tüm Dairelere +600 TL Aidat Ekle</button>
 
-            <!-- 3. Ödeme Girişi -->
             <div class="admin-section-title">💰 Ödeme Girişi Yap</div>
             <select id="adminDaireSelect"><option value="">Ödeme Yapan Daire</option></select>
             <input type="number" id="adminMiktar" placeholder="Ödenen Tutar (TL)">
             <input type="date" id="adminTarih">
             <button style="background-color: #2ecc71; margin-top: 5px; padding: 10px;" onclick="adminOdemeKaydet()">Ödemeyi Sisteme İşle</button>
             
-            <!-- 4. Duyuru Yönetim Paneli -->
             <div class="admin-section-title">📢 Duyuru Ekle / Düzenle / Sil</div>
             <select id="adminDuyuruTipi">
                 <option value="genel">Genel Duyurular'a Ekle</option>
@@ -118,13 +112,11 @@
             <div style="font-size:11px; font-weight:bold; color:#555; margin-top:10px; margin-bottom:5px;">Mevcut Duyuruları Yönet:</div>
             <div id="adminDuyuruListesiAlani"></div>
 
-            <!-- 5. Loglar ve Hafıza Sıfırlama -->
             <div class="admin-section-title">📋 Son Girilen Ödemeler</div>
             <div id="adminOdemeLoglari"></div>
             <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 8px; width: auto;" onclick="adminHafizayiTemizle()">Tüm Ödemeleri ve Ek Borçları Sıfırla</button>
         </div>
 
-        <!-- ÖDEME BİLGİLERİ -->
         <div id="iban-area">
             <div style="font-size: 13px; line-height: 1.6;">
                 <b>IBAN:</b> TR49 0001 0040 3362 5120 5150 09<br>
@@ -136,7 +128,6 @@
             </div>
         </div>
         
-        <!-- TALEPLER -->
         <div id="request-area">
             <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px; color: #f488d6;" id="talepDaireNo">Yönetime Talep Gönder</div>
             <textarea id="talepMetni" maxlength="320" placeholder="Talebinizi buraya yazın..." oninput="updateCharCount()"></textarea>
@@ -146,7 +137,6 @@
             <div id="statusMsg" style="font-size: 12px; text-align: center; margin-top: 10px; font-weight: bold;"></div>
         </div>
         
-        <!-- APARTMAN ÖZELLİKLERİ -->
         <div id="info-area">
             <h4 style="margin-top:0; color:#e67e22; font-size:15px;">Bina Teknik & Yönetim Bilgileri</h4>
             <ul class="info-list">
@@ -159,7 +149,6 @@
             </ul>
         </div>
         
-        <!-- DUYURULAR ALANI -->
         <div id="announcements-area">
             <div class="warnings special" id="ozelDuyurularKutusu">
                 <h4>📢 Özel Duyurular</h4>
@@ -173,39 +162,72 @@
     </div>
 
     <script>
-        // =========================================================================
-        // 1. BOZOK YAPI GÜNCEL DAİRE VE ŞİFRE VERİLERİ (6-7 HARİÇ, 1-31 EKSİKSİZ)
-        // =========================================================================
+        // ==========================================================================================
+        // NOT: Sitedeki "Mayıs Ayı Güncel Borç Listesini" aşağıda her dairenin yanındaki 0 değerine yazın.
+        // Sistem bunu arka planda otomatik şifreleyecek, elle Base64 yapmanıza gerek yoktur.
+        // ==========================================================================================
+        const mayisBorclari = {
+            "1": 0,    // VERİ: Daire 1 Mayıs borcu buraya (Örn: 1200)
+            "2": 0,    // VERİ: Daire 2 Mayıs borcu buraya
+            "3": 0,    // VERİ: Daire 3 Mayıs borcu buraya
+            "4": 0,    // VERİ: Daire 4 Mayıs borcu buraya
+            "5": 0,    // VERİ: Daire 5 Mayıs borcu buraya
+            "8": 0,    // VERİ: Daire 8 Mayıs borcu buraya
+            "9": 0,    // VERİ: Daire 9 Mayıs borcu buraya
+            "10": 0,   // VERİ: Daire 10 Mayıs borcu buraya
+            "11": 0,   // VERİ: Daire 11 Mayıs borcu buraya
+            "12": 0,   // VERİ: Daire 12 Mayıs borcu buraya
+            "13": 0,   // VERİ: Daire 13 Mayıs borcu buraya
+            "14": 0,   // VERİ: Daire 14 Mayıs borcu buraya
+            "15": 0,   // VERİ: Daire 15 Mayıs borcu buraya
+            "16": 0,   // VERİ: Daire 16 Mayıs borcu buraya
+            "17": 0,   // VERİ: Daire 17 Mayıs borcu buraya
+            "18": 0,   // VERİ: Daire 18 Mayıs borcu buraya
+            "19": 0,   // VERİ: Daire 19 Mayıs borcu buraya
+            "20": 0,   // VERİ: Daire 20 Mayıs borcu buraya
+            "21": 0,   // VERİ: Daire 21 Mayıs borcu buraya
+            "22": 0,   // VERİ: Daire 22 Mayıs borcu buraya
+            "23": 0,   // VERİ: Daire 23 Mayıs borcu buraya
+            "24": 0,   // VERİ: Daire 24 Mayıs borcu buraya
+            "25": 0,   // VERİ: Daire 25 Mayıs borcu buraya
+            "26": 0,   // VERİ: Daire 26 Mayıs borcu buraya
+            "27": 0,   // VERİ: Daire 27 Mayıs borcu buraya
+            "28": 0,   // VERİ: Daire 28 Mayıs borcu buraya
+            "29": 0,   // VERİ: Daire 29 Mayıs borcu buraya
+            "30": 0,   // VERİ: Daire 30 Mayıs borcu buraya
+            "31": 0    // VERİ: Daire 31 Mayıs borcu buraya
+        };
+
         const data = {
-            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 1 - 49861
-            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 2 - 71246
-            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 3 - 23583
-            "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 4 - 13675
-            "NQ==": {"s": "ODQ2MjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 5 - 84621
-            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 8 - 54894
-            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 9 - 78952
-            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 10 - 56321
-            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 11 - 47965
-            "MTI=": {"s": "NDUyMTY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 12 - 45216
-            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 13 - 32589
-            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 14 - 74698
-            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 15 - 12478
-            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 16 - 58934
-            "MTc=": {"s": "NDU4Nzk=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 17 - 45879
-            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 18 - 15789
-            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 19 - 12546
-            "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 20 - 83514
-            "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 21 - 12876
-            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 22 - 47962
-            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 23 - 65127
-            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 24 - 68746
-            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 25 - 79825
-            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 26 - 96148
-            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 27 - 36915
-            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 28 - 96512
-            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 29 - 36258
-            "MzA=": {"s": "NjU0NTM=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 30 - 65453
-            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "MA=="}  // Daire 31 - 73591
+            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["1"] || 0))}, 
+            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["2"] || 0))}, 
+            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["3"] || 0))}, 
+            "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["4"] || 0))}, 
+            "NQ==": {"s": "ODQ2MjE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["5"] || 0))}, 
+            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["8"] || 0))}, 
+            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["9"] || 0))}, 
+            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["10"] || 0))}, 
+            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["11"] || 0))}, 
+            "MTI=": {"s": "NDUyMTY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["12"] || 0))}, 
+            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["13"] || 0))}, 
+            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["14"] || 0))}, 
+            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["15"] || 0))}, 
+            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["16"] || 0))}, 
+            "MTc=": {"s": "NDU4Nzk=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["17"] || 0))}, 
+            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["18"] || 0))}, 
+            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["19"] || 0))}, 
+            "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["20"] || 0))}, 
+            "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["21"] || 0))}, 
+            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["22"] || 0))}, 
+            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["23"] || 0))}, 
+            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["24"] || 0))}, 
+            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["25"] || 0))}, 
+            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["26"] || 0))}, 
+            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["27"] || 0))}, 
+            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["28"] || 0))}, 
+            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["29"] || 0))}, 
+            "MzA=": {"s": "NjU0NTM=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["30"] || 0))}, 
+            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": window.btoa(String(mayisBorclari["31"] || 0))}
         };
 
         const _mkey = "NzEyNDYyNA=="; // Süper Şifre: 7124624
@@ -215,9 +237,6 @@
         };
         const aylarTR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-        // ==========================================
-        // SAYFA YÜKLENİRKEN YAPILACAKLAR
-        // ==========================================
         window.onload = function() {
             let seciliAy = localStorage.getItem('bozok_aktif_ay');
             let seciliYil = localStorage.getItem('bozok_aktif_yil');
@@ -232,7 +251,6 @@
             document.getElementById('dinamikBaslik').innerText = `${aylarTR[seciliAy]} ${seciliYil} Aidat Sorgulama`;
             document.getElementById('adminTarih').value = new Date().toISOString().split('T')[0];
 
-            // Aktif Dönem Seçim Listesi (Yönetici)
             const adminAySecici = document.getElementById('adminAySecimi');
             const mevcutYil = new Date().getFullYear();
             [mevcutYil, mevcutYil + 1].forEach(yil => {
@@ -245,7 +263,6 @@
                 });
             });
 
-            // Tüm Daire Listesini Doldurma
             const select = document.getElementById('daireSelect');
             const adminSelect = document.getElementById('adminDaireSelect');
             
@@ -315,11 +332,10 @@
                 toggleArea('result');
                 const daireNo = cozu_b64(k).replace(/\D/g,'');
                 
-                let hamBorc = parseFloat(cozu_b64(data[k].t));
+                let hamBorc = parseFloat(cozu_b64(data[k].t)) || 0;
                 let eklenenYeniAyBorclari = adminEkBorcGetir(daireNo);
                 let odenenYonetici = adminDaireToplamOdenenGetir(daireNo);
                 
-                // Eski borç + yeni aylar - ödemeler
                 let guncelToplam = Math.max(0, (hamBorc + eklenenYeniAyBorclari) - odenenYonetici);
 
                 res.innerHTML = `
@@ -374,27 +390,23 @@
             document.getElementById('dinamikBaslik').innerText = `${aylarTR[parca[0]]} ${parca[1]} Aidat Sorgulama`;
         }
 
-        // DÜZELTİLEN YER: Eski ek borçların üzerine ekler (+600 TL biriktirir)
         function adminYeniAyBorcuEkle() {
             let aktifAy = aylarTR[localStorage.getItem('bozok_aktif_ay')];
             let aktifYil = localStorage.getItem('bozok_aktif_yil');
             
-            if(confirm(`DİKKAT: [ ${aktifAy} ${aktifYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat eklenecektir. Geçmiş borçların ÜZERİNE eklenecektir. Onaylıyor musunuz?`)) {
+            if(confirm(`DİKKAT: [ ${aktifAy} ${aktifYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat eklenecektir. Eski birikmiş borçların ÜZERİNE eklenecektir. Onaylıyor musunuz?`)) {
                 let ekBorclar = localStorage.getItem('bozok_ek_borclar') ? JSON.parse(localStorage.getItem('bozok_ek_borclar')) : {};
                 
                 Object.keys(data).forEach(key => {
                     let dNo = cozu_b64(key).replace(/\D/g,'');
                     if(!dNo) return;
                     
-                    // Eğer dairenin hafızada eski bir ek borcu varsa onu sayıya çeviriyoruz, yoksa 0'dan başlatıyoruz
                     let eskiEkBorc = ekBorclar[dNo] ? parseFloat(ekBorclar[dNo]) : 0;
-                    
-                    // Eski borcun ÜZERİNE 600 ekliyoruz (Silinmesini engeller)
-                    ekBorclar[dNo] = eskiEkBorc + 600;
+                    ekBorclar[dNo] = eskiEkBorc + 600; // Eski ek borcun ÜZERİNE biriktirerek ekleme yapar
                 });
                 
                 localStorage.setItem('bozok_ek_borclar', JSON.stringify(ekBorclar));
-                alert("Başarılı: Yeni ay aidat yükü geçmiş borçlar silinmeden tüm dairelere eklendi.");
+                alert("Başarılı: Yeni ay aidat yükü eski borçlar korunarak tüm dairelere eklendi.");
             }
         }
 
@@ -451,10 +463,10 @@
         }
 
         // ==========================================
-        // GELİŞMİŞ DUYURU YÖNETİM MOTORU
+        // DUYURU MOTORU
         // ==========================================
         const varsayilanDuyurular = {
-            ozel: ["Apartman etrafı, giriş and garajlar bu ay içinde haşerelere karşı ilaçlanmıştır."],
+            ozel: ["Apartman etrafı, giriş ve garajlar bu ay içinde haşerelere karşı ilaçlanmıştır."],
             genel: [
                 "Komşularınızı rahatsız edecek gürültüden kaçınınız.",
                 "Ortak alanlara ve bahçeye çöp atmayınız.",
@@ -528,7 +540,7 @@
             }
         }
 
-        // Formspree Altyapısı
+        // Formspree Entegrasyonu
         async function talepGonder() {
             const daireKey = document.getElementById('daireSelect').value;
             const mesaj = document.getElementById('talepMetni').value;
