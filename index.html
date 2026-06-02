@@ -174,39 +174,38 @@
 
     <script>
         // =========================================================================
-        // 1. BOZOK YAPI EKSİKSİZ TÜM DAİRE VERİLERİ (1'DEN 30'A KADAR TAM LİSTE)
+        // 1. BOZOK YAPI GÜNCEL DAİRE VE ŞİFRE VERİLERİ (6-7 HARİÇ, 1-31 EKSİKSİZ)
         // =========================================================================
         const data = {
-            "MQ==": {"s": "OTY4NQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "Mg==": {"s": "MTIzNA==", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="},
-            "Mw==": {"s": "NTY3OA==", "b": "NjAw", "a": "MA==", "t": "NjAw"},
-            "NA==": {"s": "NDQ0NA==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "NQ==": {"s": "NTU1NQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "Ng==": {"s": "NjY2Ng==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "Nw==": {"s": "Nzc3Nw==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "OA==": {"s": "ODg4OA==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "OQ==": {"s": "OTk5OQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTA=": {"s": "MTAxMA==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTE=": {"s": "MTExMQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTI=": {"s": "MTIxMg==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTM=": {"s": "MTMxMw==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTQ=": {"s": "MTQxNA==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTU ABA==": {"s": "MTUxNQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTY=": {"s": "MTYxNg==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTc=": {"s": "MTcxNw==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTg=": {"s": "MTgxOA==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTk=": {"s": "MTkxOQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MjA=": {"s": "MjAyMA==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MjE=": {"s": "MjEyMQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MjI=": {"s": "MjIyMg==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MjM=": {"s": "MjMyMw==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MjQ=": {"s": "MjQy==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MjU=": {"s": "MjUyNQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MjY=": {"s": "MjYyNg==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "Mjc=": {"s": "MjdjNw==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "Mjg=": {"s": "MjhjOA==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "Mjk指定": {"s": "MjlhOQ==", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MzA=": {"s": "MzAzMA==", "b": "MA==", "a": "MA==", "t": "MA=="}
+            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 1 - 49861
+            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 2 - 71246
+            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 3 - 23583
+            "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 4 - 13675
+            "NQ==": {"s": "ODQ2MjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 5 - 84621
+            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 8 - 54894
+            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 9 - 78952
+            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 10 - 56321
+            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 11 - 47965
+            "MTI=": {"s": "NDUyMTY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 12 - 45216
+            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 13 - 32589
+            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 14 - 74698
+            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 15 - 12478
+            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 16 - 58934
+            "MTc=": {"s": "NDU4Nzk=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 17 - 45879
+            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 18 - 15789
+            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 19 - 12546
+            "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 20 - 83514
+            "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 21 - 12876
+            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 22 - 47962
+            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 23 - 65127
+            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 24 - 68746
+            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 25 - 79825
+            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 26 - 96148
+            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 27 - 36915
+            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 28 - 96512
+            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 29 - 36258
+            "MzA=": {"s": "NjU0NTM=", "b": "MA==", "a": "MA==", "t": "MA=="}, // Daire 30 - 65453
+            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "MA=="}  // Daire 31 - 73591
         };
 
         const _mkey = "NzEyNDYyNA=="; // Süper Şifre: 7124624
@@ -250,13 +249,12 @@
             const select = document.getElementById('daireSelect');
             const adminSelect = document.getElementById('adminDaireSelect');
             
-            // Temiz bir sıralama için daireleri numarasına göre diziyoruz
             Object.keys(data).sort((a,b) => {
                 let numA = parseInt(cozu_b64(a).replace(/\D/g,'')) || 0;
                 let numB = parseInt(cozu_b64(b).replace(/\D/g,'')) || 0;
                 return numA - numB;
             }).forEach(key => {
-                let dNo = cozu_b64(key).replace(/\D/g,''); // Sadece rakam kısmını al
+                let dNo = cozu_b64(key).replace(/\D/g,'');
                 if(!dNo) return;
                 
                 let opt = document.createElement('option');
