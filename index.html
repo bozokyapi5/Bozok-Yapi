@@ -93,9 +93,9 @@
             <div class="admin-section-title">📅 Ana Sayfa Aktif Dönem Seçimi</div>
             <select id="adminAySecimi" onchange="adminDonemGuncelle()"></select>
 
-            <!-- 2. Yeni Ay Aidat Ekleme Kilidi -->
+            <!-- 2. Yeni Ay Aidat Ekleme -->
             <div class="admin-section-title">➕ Yeni Ay Aidat Matrahı Yansıt</div>
-            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Yeni aya girildiğinde tüm dairelere tek tıkla 600 TL borç ekler.</p>
+            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Yeni aya girildiğinde tüm dairelere tek tıkla +600 TL borç ekler ve eskilerin üzerine biriktirir.</p>
             <button class="admin-btn-sm" style="background-color: #e67e22;" onclick="adminYeniAyBorcuEkle()">Tüm Dairelere +600 TL Aidat Ekle</button>
 
             <!-- 3. Ödeme Girişi -->
@@ -121,7 +121,7 @@
             <!-- 5. Loglar ve Hafıza Sıfırlama -->
             <div class="admin-section-title">📋 Son Girilen Ödemeler</div>
             <div id="adminOdemeLoglari"></div>
-            <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 8px; width: auto;" onclick="adminHafizayiTemizle()">Tüm Ödemeleri Sıfırla</button>
+            <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 8px; width: auto;" onclick="adminHafizayiTemizle()">Tüm Ödemeleri ve Ek Borçları Sıfırla</button>
         </div>
 
         <!-- ÖDEME BİLGİLERİ -->
@@ -319,12 +319,13 @@
                 let eklenenYeniAyBorclari = adminEkBorcGetir(daireNo);
                 let odenenYonetici = adminDaireToplamOdenenGetir(daireNo);
                 
+                // Eski borç + yeni aylar - ödemeler
                 let guncelToplam = Math.max(0, (hamBorc + eklenenYeniAyBorclari) - odenenYonetici);
 
                 res.innerHTML = `
                     <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Daire Numarası:</span> <b>${daireNo}</b></div>
-                    <div style="display:flex; justify-content:space-between; border-top:2px solid #e2e8f0; padding-top:10px; color:#e74c3c; font-weight:bold;"><span>Geçmiş Borç:</span> <span>${guncelToplam} TL</span></div>
-                    <center><button style="background:#f39c12; font-size:12px; padding:8px 15px; width:auto; margin-top:15px;" onclick="detayHesapla(${guncelToplam})">Geçmiş Dönem Ayrıntıları</button></center>
+                    <div style="display:flex; justify-content:space-between; border-top:2px solid #e2e8f0; padding-top:10px; color:#e74c3c; font-weight:bold;"><span>Toplam Borç:</span> <span>${guncelToplam} TL</span></div>
+                    <center><button style="background:#f39c12; font-size:12px; padding:8px 15px; width:auto; margin-top:15px;" onclick="detayHesapla(${guncelToplam})">Dönem Ayrıntıları</button></center>
                     <div id="borc-detay-listesi" style="margin-top:15px; display:none;"></div>
                 `;
             } else { alert("Hatalı şifre veya daire seçimi!"); }
@@ -373,22 +374,27 @@
             document.getElementById('dinamikBaslik').innerText = `${aylarTR[parca[0]]} ${parca[1]} Aidat Sorgulama`;
         }
 
+        // DÜZELTİLEN YER: Eski ek borçların üzerine ekler (+600 TL biriktirir)
         function adminYeniAyBorcuEkle() {
             let aktifAy = aylarTR[localStorage.getItem('bozok_aktif_ay')];
             let aktifYil = localStorage.getItem('bozok_aktif_yil');
             
-            if(confirm(`DİKKAT: [ ${aktifAy} ${aktifYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat eklenecektir. Onaylıyor musunuz?`)) {
+            if(confirm(`DİKKAT: [ ${aktifAy} ${aktifYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat eklenecektir. Geçmiş borçların ÜZERİNE eklenecektir. Onaylıyor musunuz?`)) {
                 let ekBorclar = localStorage.getItem('bozok_ek_borclar') ? JSON.parse(localStorage.getItem('bozok_ek_borclar')) : {};
                 
                 Object.keys(data).forEach(key => {
                     let dNo = cozu_b64(key).replace(/\D/g,'');
                     if(!dNo) return;
-                    if(!ekBorclar[dNo]) ekBorclar[dNo] = 0;
-                    ekBorclar[dNo] += 600;
+                    
+                    // Eğer dairenin hafızada eski bir ek borcu varsa onu sayıya çeviriyoruz, yoksa 0'dan başlatıyoruz
+                    let eskiEkBorc = ekBorclar[dNo] ? parseFloat(ekBorclar[dNo]) : 0;
+                    
+                    // Eski borcun ÜZERİNE 600 ekliyoruz (Silinmesini engeller)
+                    ekBorclar[dNo] = eskiEkBorc + 600;
                 });
                 
                 localStorage.setItem('bozok_ek_borclar', JSON.stringify(ekBorclar));
-                alert("Başarılı: Yeni ay aidat yükü tüm dairelerin hesaplarına yansıtıldı.");
+                alert("Başarılı: Yeni ay aidat yükü geçmiş borçlar silinmeden tüm dairelere eklendi.");
             }
         }
 
@@ -448,7 +454,7 @@
         // GELİŞMİŞ DUYURU YÖNETİM MOTORU
         // ==========================================
         const varsayilanDuyurular = {
-            ozel: ["Apartman etrafı, giriş ve garajlar bu ay içinde haşerelere karşı ilaçlanmıştır."],
+            ozel: ["Apartman etrafı, giriş and garajlar bu ay içinde haşerelere karşı ilaçlanmıştır."],
             genel: [
                 "Komşularınızı rahatsız edecek gürültüden kaçınınız.",
                 "Ortak alanlara ve bahçeye çöp atmayınız.",
