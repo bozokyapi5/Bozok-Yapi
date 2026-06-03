@@ -57,13 +57,18 @@
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        .detay-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
+        .detay-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 14px; color: #333; }
         .detay-header { font-weight: bold; color: #205295; margin-bottom: 10px; border-bottom: 2px solid #205295; padding-bottom: 5px; }
         .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between; align-items: center;}
         .admin-section-title { font-size: 12px; font-weight: bold; color: #205295; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 3px; }
         .admin-btn-sm { background-color: #34495e; padding: 8px; font-size: 12px; margin-top: 5px; width: auto; display: inline-block; margin-right: 5px; }
         .duyuru-yonetim-item { display: flex; justify-content: space-between; align-items: center; background: #fdfefe; border: 1px solid #e2e8f0; padding: 6px; margin-bottom: 4px; border-radius: 8px; font-size: 11px; }
         .del-btn { background: #e74c3c; padding: 3px 6px; font-size: 10px; width: auto; margin: 0; border-radius: 6px; }
+
+        /* Yeni Sorgu Sonucu Stilleri */
+        .sorgu-satir { font-size: 16px; margin-bottom: 8px; color: #2c3e50; font-weight: 600; }
+        .sorgu-vurgu { font-size: 18px; font-weight: 800; color: #205295; margin-top: 12px; margin-bottom: 2px; text-transform: uppercase; }
+        .sorgu-aciklama { font-size: 12px; color: #7f8c8d; font-style: italic; margin-bottom: 15px; line-height: 1.4; display: block; }
     </style>
 </head>
 <body>
@@ -87,6 +92,10 @@
         <div id="admin-area" style="max-height: 550px; overflow-y: auto;">
             <div class="detay-header" style="color: #c0392b; border-color: #c0392b;">🛠️ Gelişmiş Yönetici Paneli</div>
             
+            <div class="admin-section-title">📝 Sorgulama Açıklama Metni</div>
+            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Sakinler sorgulama yaptığında borcun altında yazacak bilgilendirme yazısı:</p>
+            <input type="text" id="adminAciklamaMetni" placeholder="Örn: 03.06.2026 tarihine kadar yapılan ödemeleri kapsar" oninput="adminAciklamaGuncelle()">
+
             <div class="admin-section-title">📅 Ana Sayfa Aktif Dönem Seçimi</div>
             <select id="adminAySecimi" onchange="adminDonemGuncelle()"></select>
 
@@ -170,7 +179,7 @@
             "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 1 - Borç: 0
             "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 2 - Borç: 0
             "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 3 - Borç: 1200
-            "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 4 - Borç: 600
+            "NA==": {"s": "MTM6NzU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 4 - Borç: 600
             "NQ==": {"s": "ODQ2MjE=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 5 - Borç: 1200
             "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 8 - Borç: 0
             "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 9 - Borç: 0
@@ -215,6 +224,14 @@
                 localStorage.setItem('bozok_aktif_ay', seciliAy);
                 localStorage.setItem('bozok_aktif_yil', seciliYil);
             }
+
+            // Varsayılan yönetici açıklama metnini ayarla
+            let sAciklama = localStorage.getItem('bozok_admin_aciklama');
+            if(!sAciklama) {
+                sAciklama = "03.06.2026 tarihine kadar yapılan ödemeleri kapsar";
+                localStorage.setItem('bozok_admin_aciklama', sAciklama);
+            }
+            document.getElementById('adminAciklamaMetni').value = sAciklama;
 
             document.getElementById('dinamikBaslik').innerText = `${aylarTR[seciliAy]} ${seciliYil} Aidat Sorgulama`;
             document.getElementById('adminTarih').value = new Date().toISOString().split('T')[0];
@@ -291,6 +308,9 @@
             sorgula();
         }
 
+        // ==========================================
+        // SORGULAMALAR KISMI (İSTENİLEN TASARIM)
+        // ==========================================
         function sorgula() {
             const k = document.getElementById('daireSelect').value;
             const p = document.getElementById('passInput').value;
@@ -306,12 +326,15 @@
                 let odenenYonetici = adminDaireToplamOdenenGetir(daireNo);
                 
                 let guncelToplam = Math.max(0, (hamBorc + eklenenYeniAyBorclari) - odenenYonetici);
+                let aciklamaMetni = localStorage.getItem('bozok_admin_aciklama') || "03.06.2026 tarihine kadar yapılan ödemeleri kapsar";
 
                 res.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>Daire Numarası:</span> <b>${daireNo}</b></div>
-                    <div style="display:flex; justify-content:space-between; border-top:2px solid #e2e8f0; padding-top:10px; color:#e74c3c; font-weight:bold;"><span>Toplam Borç:</span> <span>${guncelToplam} TL</span></div>
-                    <center><button style="background:#f39c12; font-size:12px; padding:8px 15px; width:auto; margin-top:15px;" onclick="detayHesapla(${guncelToplam})">Dönem Ayrıntıları</button></center>
-                    <div id="borc-detay-listesi" style="margin-top:15px; display:none;"></div>
+                    <div class="sorgu-satir">🏠 Daire: ${daireNo}</div>
+                    <div class="sorgu-satir">CNY Geçmiş Borç: ${hamBorc} TL</div>
+                    <div class="sorgu-vurgu">ÖDENECEK TOPLAM TUTAR: ${guncelToplam} TL</div>
+                    <span class="sorgu-aciklama">${aciklamaMetni}</span>
+                    <button style="background:#205295; font-size:13px; padding:10px 15px; width:100%; margin-top:5px; border-radius:12px;" onclick="detayHesapla(${guncelToplam})">Geçmiş Dönem Ayrıntıları</button>
+                    <div id="borc-detay-listesi" style="margin-top:15px; display:none; background:#f8fafc; padding:12px; border-radius:12px; border:1px dashed #205295;"></div>
                 `;
             } else { alert("Hatalı şifre veya daire seçimi!"); }
         }
@@ -326,7 +349,7 @@
                 dAlan.style.display = "block"; return;
             }
             
-            let html = "<div class='detay-header'>Kalan Borç Dağılımı Tahmini</div>";
+            let html = "<div class='detay-header' style='font-size:14px; margin-bottom:8px;'>Hangi Aylara Ait Borç Var?</div>";
             let sAy = parseInt(localStorage.getItem('bozok_aktif_ay'));
             let sYil = parseInt(localStorage.getItem('bozok_aktif_yil'));
 
@@ -339,18 +362,23 @@
                     html += `<div class='detay-item'><span>${baslik}</span><b>${matrah} TL</b></div>`;
                     kalan -= matrah;
                 } else if (kalan > 0) {
-                    html += `<div class='detay-item'><span>${baslik} (Kısmi)</span><b>${kalan.toFixed(2)} TL</b></div>`;
+                    html += `<div class='detay-item'><span>${baslik} (Kısmi)</span><b>${kalan.toFixed(0)} TL</b></div>`;
                     kalan = 0;
                 }
                 sAy--; if(sAy < 0) { sAy = 11; sYil--; }
             }
-            if (kalan > 0) html += `<div class='detay-item'><span>Eski Dönem Bakiyesi</span><b>${kalan.toFixed(2)} TL</b></div>`;
+            if (kalan > 0) html += `<div class='detay-item'><span>Eski Dönem Bakiyesi</span><b>${kalan.toFixed(0)} TL</b></div>`;
             dAlan.innerHTML = html; dAlan.style.display = "block";
         }
 
         // ==========================================
         // YÖNETİCİ PANELİ İŞLEMLERİ
         // ==========================================
+        function adminAciklamaGuncelle() {
+            const txt = document.getElementById('adminAciklamaMetni').value;
+            localStorage.setItem('bozok_admin_aciklama', txt);
+        }
+
         function adminDonemGuncelle() {
             const secilenDeger = document.getElementById('adminAySecimi').value;
             const parca = secilenDeger.split('-');
@@ -526,14 +554,16 @@
                 });
                 if (response.ok) {
                     status.innerText = "✅ Talebiniz başarıyla iletildi.";
-                    status.style.color = "#27ae60";
                     document.getElementById('talepMetni').value = "";
                     updateCharCount();
-                } else { throw new Error(); }
+                } else {
+                    status.innerText = "❌ Bir hata oluştu. Lütfen tekrar deneyin.";
+                }
             } catch (error) {
-                status.innerText = "❌ Gönderim hatası oluştu!";
-                status.style.color = "#e74c3c";
-            } finally { btn.disabled = false; btn.style.opacity = "1"; loader.style.display = "none"; }
+                status.innerText = "❌ Sunucu bağlantı hatası.";
+            } finally {
+                btn.disabled = false; btn.style.opacity = "1"; loader.style.display = "none";
+            }
         }
     </script>
 </body>
