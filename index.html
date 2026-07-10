@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <style>
         body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f4f8; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding: 20px 10px; box-sizing: border-box; }
         
@@ -22,7 +25,6 @@
             position: relative;
         }
         
-        /* Sade Başlık Stili */
         h2 { color: #205295; margin-bottom: 5px; font-size: 24px; letter-spacing: 1.5px; font-weight: 900; text-transform: uppercase; }
         .sub-title { color: #546e7a; font-size: 14px; margin-bottom: 30px; font-weight: 600; }
         
@@ -39,7 +41,7 @@
         .info-btn { background-color: #f39c12; font-size: 14px; padding: 13px; }
         .announcement-btn { background-color: #ef597c; font-size: 14px; padding: 13px; }
         
-        #result, #iban-area, #request-area, #info-area, #announcements-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 1.5px solid #205295; animation: fadeIn 0.4s ease-out; }
+        #result, #iban-area, #request-area, #info-area, #announcements-area, #admin-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 1.5px solid #205295; animation: fadeIn 0.4s ease-out; }
         
         .info-list { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.6; }
         .info-list li { margin-bottom: 10px; }
@@ -58,25 +60,91 @@
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        .detay-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 13px; }
-        .detay-header { font-weight: bold; color: #205295; margin-bottom: 10px; border-bottom: 2px solid #205295; padding-bottom: 5px; }
+        /* İdeal Tasarım Ölçüleri */
+        .sorgu-konteyner { background: #ffffff; padding: 5px 2px; }
+        .sorgu-satir { display: flex; justify-content: space-between; align-items: center; font-size: 16px; color: #2c3e50; margin-bottom: 10px; }
+        .sorgu-etiket { display: flex; align-items: center; font-weight: 500; color: #1e293b; }
+        .sorgu-etiket span { margin-right: 8px; font-size: 18px; }
+        .sorgu-deger { font-weight: 700; color: #000000; font-size: 16px; }
+        .sorgu-ayrac { border: 0; border-top: 1px solid #e2e8f0; margin: 10px 0; }
+        
+        .sorgu-vurgu-satir { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; margin-bottom: 4px; }
+        .sorgu-vurgu-etiket { font-size: 15px; font-weight: 800; color: #e1523d; letter-spacing: 0.3px; }
+        .sorgu-vurgu-deger { font-size: 16px; font-weight: 800; color: #e1523d; }
+        
+        .sorgu-aciklama { font-size: 12px; color: #8a99ad; font-style: italic; text-align: center; margin-bottom: 15px; line-height: 1.4; display: block; }
+        
+        .turuncu-detay-btn { background: #f09313; color: white; font-size: 14px; font-weight: 700; padding: 10px 20px; border-radius: 25px; border: none; width: auto; display: block; margin: 0 auto 12px auto; box-shadow: 0 4px 10px rgba(240, 147, 19, 0.25); cursor: pointer; }
+        .turuncu-detay-btn:active { transform: scale(0.97); }
+
+        .detay-header { font-size: 16px; font-weight: 700; color: #164e87; margin-top: 12px; margin-bottom: 6px; padding-bottom: 6px; border-bottom: 2px solid #164e87; text-align: left; }
+        .detay-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #edf2f7; font-size: 14px; color: #2d3748; }
+        .detay-item span { font-weight: 500; }
+        .detay-item b { font-weight: 700; color: #000000; }
+
+        /* Yönetici Paneli Ek Stilleri */
+        .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between; align-items: center;}
+        .admin-section-title { font-size: 12px; font-weight: bold; color: #205295; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 3px; }
+        .admin-btn-sm { background-color: #34495e; padding: 8px; font-size: 12px; margin-top: 5px; width: auto; display: inline-block; margin-right: 5px; }
+        .duyuru-yonetim-item { display: flex; justify-content: space-between; align-items: center; background: #fdfefe; border: 1px solid #e2e8f0; padding: 6px; margin-bottom: 4px; border-radius: 8px; font-size: 11px; }
+        .del-btn { background: #e74c3c; padding: 3px 6px; font-size: 10px; width: auto; margin: 0; border-radius: 6px; }
     </style>
 </head>
 <body>
     <div class="card">
         <h2>BOZOK YAPI</h2>
-        <div class="sub-title">Haziran 2026 Aidat Sorgulama</div>
+        <div class="sub-title" id="dinamikBaslik">Aidat Sorgulama</div>
         
-        <select id="daireSelect"><option value="">Dairenizi Seçin</option></select>
+        <select id="daireSelect">
+            <option value="">Dairenizi Seçin</option>
+        </select>
         <input type="password" id="passInput" placeholder="Size Özel Şifre" inputmode="numeric">
         
-        <button onclick="sorgula()">SORGULA</button>
+        <button onclick="sorgulaButonAksiyon()">SORGULA</button>
         <button class="iban-btn" onclick="toggleArea('iban-area')">ÖDEME BİLGİLERİ (IBAN)</button>
         <button class="request-btn" onclick="talepEkraniAc()">TALEPLER</button>
         <button class="info-btn" onclick="toggleArea('info-area')">APARTMAN ÖZELLİKLERİ</button>
         <button class="announcement-btn" onclick="toggleArea('announcements-area')">DUYURULAR</button>
 
         <div id="result"></div>
+
+        <div id="admin-area" style="max-height: 550px; overflow-y: auto;">
+            <div style="font-size: 16px; font-weight: bold; color: #c0392b; margin-bottom: 10px; border-bottom: 2px solid #c0392b; padding-bottom: 5px;">🛠️ Gelişmiş Yönetici Paneli (Canlı Bulut)</div>
+            
+            <div class="admin-section-title">📝 Sorgulama Açıklama Metni</div>
+            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Sakinler sorgulama yaptığında borcun altında yazacak bilgilendirme yazısı:</p>
+            <input type="text" id="adminAciklamaMetni" placeholder="Örn: 03.06.2026 tarihine kadar yapılan ödemeleri kapsar" oninput="adminAciklamaGuncelle()">
+
+            <div class="admin-section-title">📅 Ana Sayfa Aktif Dönem Seçimi</div>
+            <select id="adminAySecimi" onchange="adminDonemGuncelle()"></select>
+
+            <div class="admin-section-title">➕ Yeni Ay Aidat Matrahı Yansıt</div>
+            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Yeni aya girildiğinde tüm dairelere tek tıkla +600 TL borç ekler.</p>
+            <button class="admin-btn-sm" style="background-color: #e67e22;" onclick="adminYeniAyBorcuEkle()">Tüm Dairelere +600 TL Aidat Ekle</button>
+
+            <div class="admin-section-title">💰 Ödeme Girişi Yap</div>
+            <select id="adminDaireSelect"><option value="">Ödeme Yapan Daire</option></select>
+            <input type="number" id="adminMiktar" placeholder="Ödenen Tutar (TL)">
+            <input type="date" id="adminTarih">
+            <button style="background-color: #2ecc71; margin-top: 5px; padding: 10px;" onclick="adminOdemeKaydet()">Ödemeyi Sisteme İşle</button>
+            
+            <div class="admin-section-title">📢 Duyuru Ekle / Düzenle / Sil</div>
+            <select id="adminDuyuruTipi">
+                <option value="ozel">Özel Duyurular'a Ekle</option>
+                <option value="genel">Genel Duyurular'a Ekle</option>
+            </select>
+            <input type="text" id="adminDuyuruMetni" placeholder="Duyuru metnini yazınız...">
+            <button class="admin-btn-sm" style="background-color: #3498db;" onclick="adminDuyuruEkle()">Duyuruyu Yayınla</button>
+            <button class="admin-btn-sm" style="background-color: #95a5a6;" onclick="adminDuyurulariSifirla()">Sistem Duyurularını Yeniden Yükle</button>
+            
+            <div style="font-size:11px; font-weight:bold; color:#555; margin-top:10px; margin-bottom:5px;">Mevcut Duyuruları Yönet:</div>
+            <div id="adminDuyuruListesiAlani"></div>
+
+            <div class="admin-section-title">📋 Son Girilen Ödemeler</div>
+            <div id="adminOdemeLoglari"></div>
+            <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 8px; width: auto;" onclick="adminHafizayiTemizle()">Tüm Canlı Ödemeleri ve Ek Borçları Sıfırla</button>
+        </div>
+
         <div id="iban-area">
             <div style="font-size: 13px; line-height: 1.6;">
                 <b>IBAN:</b> TR49 0001 0040 3362 5120 5150 09<br>
@@ -87,6 +155,7 @@
                 </div>
             </div>
         </div>
+        
         <div id="request-area">
             <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px; color: #f488d6;" id="talepDaireNo">Yönetime Talep Gönder</div>
             <textarea id="talepMetni" maxlength="320" placeholder="Talebinizi buraya yazın..." oninput="updateCharCount()"></textarea>
@@ -95,68 +164,400 @@
             <div id="loader" class="loading-spinner"></div>
             <div id="statusMsg" style="font-size: 12px; text-align: center; margin-top: 10px; font-weight: bold;"></div>
         </div>
+        
         <div id="info-area">
             <h4 style="margin-top:0; color:#e67e22; font-size:15px;">Bina Teknik & Yönetim Bilgileri</h4>
             <ul class="info-list">
-                <li>Apartmanda Turksat Kablonet (Fiber) alt yapısı bulunmaktadır.</li>
-                <li>Apartmanda Turktelekom Fiber alt yapısı bulunmaktadır.</li>
+                <li>Apartmanda Türksat Kablonet (Fiber) alt yapısı bulunmaktadır.</li>
+                <li>Apartmanda Türk Telekom Fiber alt yapısı bulunmaktadır.</li>
                 <li>Apartmanda Digiturk alt yapısı bulunmaktadır.</li>
-                <li>Apartmana ait iki kapalı bir de bahçe açık otoparkı bulunmaktadır. -2 katta bulunan kapalı otoparka 1.75 cm altı araçlar park edebilir. Her daire, otopark kullanımında sadece, <b>tek araç park hakkına</b> sahiptir.</li>
+                <li>Apartmana ait iki kapalı bir de bahçe açık otoparkı bulunmaktadır. -2 katta bulunan kapalı otoparka 1.75 cm altı araçlar park edebilir. Her daire, otopark kullanımında sadece, tek araç park hakkına sahiptir.</li>
                 <li>Apartman içi ve bahçe temizliği haftada tek gün şeklinde yapılmaktadır. Yangın merdiven temizliği ise ayda bir olacak şekilde yapılmaktadır.</li>
                 <li>Deprem ve yangın kaçış alanlarının eşya konmasından ötürü kapalı kalması sonucu oluşacak olumsuzluktan ilgili daire sahibi sorumludur.</li>
                 <li>Apartman yönetimi, yönetici seçilmediğinden ötürü tüm daire sahiplerinin eşit haklara sahip olduğu biçimiyle sağlanmaktadır. Yönetici yetkilerinden, sorumluluklarından, alınan tüm kararlardan, yapılan tüm duyurulardan, yürütülen iş ve işlemlerden tüm daire sahipleri sorumludur.</li>
             </ul>
         </div>
+        
         <div id="announcements-area">
-            <div class="warnings special">
+            <div class="warnings special" id="ozelDuyurularKutusu">
                 <h4>📢 Özel Duyurular</h4>
-                <ul><li>Apartman etrafı, giriş ve garajlar bu ay içinde haşerelere karşı ilaçlanmıştır.</li></ul>
+                <ul id="ozelDuyuruListesi"></ul>
             </div>
-            <div class="warnings">
+            <div class="warnings" id="genelDuyurularKutusu">
                 <h4>📢 Genel Duyurular</h4>
-                <ul>
-                    <li>Komşularınızı rahatsız edecek gürültüden kaçınınız.</li>
-                    <li>Ortak alanlara ve bahçeye çöp atmayınız.</li>
-                    <li>Yangın merdivenlerine eşya koymayınız.</li>
-                    <li>Otopark yer önceliğine dikkat ediniz.</li>
-                    <li>Aidatlar her ayın 18'ine kadar ödenmelidir.</li>
-                </ul>
+                <ul id="genelDuyuruListesi"></ul>
             </div>
         </div>
     </div>
 
     <script>
-        const data = {"MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="}, "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="}, "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "NA==": {"s": "MTM2NzU=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "NQ==": {"s": "ODQ2MjE=", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="}, "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTI=": {"s": "NDUyMTY=", "b": "NjAw", "a": "NjAw", "t": "MTIwMA=="}, "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTc=": {"s": "NDU4Nzk=", "b": "OTAw", "a": "NjAw", "t": "MTUwMA=="}, "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MjI=": {"s": "NDc5NjI=", "b": "NjAw", "a": "NjAw", "t": "MTIwMA=="}, "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "MjY=": {"s": "OTYxNDg=", "b": "NjAw", "a": "NjAw", "t": "MTIwMA=="}, "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "NjAw", "t": "NjAw"}, "Mjg=": {"s": "OTY1MTI=", "b": "MTIwMA==", "a": "NjAw", "t": "MTgwMA=="}, "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "NjAw", "t": "MA=="}, "MzA=": {"s": "NjU0NTM=", "b": "NjAw", "a": "NjAw", "t": "MTIwMA=="}, "MzE=": {"s": "NzM1OTE=", "b": "ODAw", "a": "NjAw", "t": "MTQwMA=="}};
-        const _mkey = "NzEyNDYyNA==";
-        const cozu_b64 = (str) => decodeURIComponent(escape(window.atob(str)));
+        // =========================================================================
+        // ENTEGRE EDİLEN FİREBASE CANLI VERİ TABANI BİLGİLERİNİZ
+        // =========================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOc8bVcwsdoyGvbkE088RJTaH5Ar-z82o",
+            authDomain: "bozok-yapi.firebaseapp.com",
+            databaseURL: "https://bozok-yapi-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "bozok-yapi",
+            storageBucket: "bozok-yapi.firebasestorage.app",
+            messagingSenderId: "40656343275",
+            appId: "1:40656343275:web:ddaf9ab81d0d9f47e9eeae"
+        };
+        
+        // Firebase Başlatma
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
-        const select = document.getElementById('daireSelect');
-        Object.keys(data).sort((a,b) => parseInt(cozu_b64(a)) - parseInt(cozu_b64(b))).forEach(key => {
-            let opt = document.createElement('option');
-            opt.value = key; opt.innerHTML = "Daire No: " + cozu_b64(key);
-            select.appendChild(opt);
-        });
+        // Sabit Şifreler ve Başlangıç Verileri
+        const data = {
+            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 1
+            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 2
+            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 3
+            "NA==": {"s": "MTM6NzU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 4
+            "NQ==": {"s": "ODQ6MjE=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 5
+            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 8
+            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 9
+            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 10
+            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 11
+            "MTI=": {"s": "NDU0MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
+            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 13
+            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 14
+            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 15
+            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "NzAw"},           // Daire 16
+            "MTc=": {"s": "NDU4Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},       // Daire 17
+            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 18
+            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 19
+            "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20
+            "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 21
+            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 22
+            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 23
+            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 24
+            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 25
+            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 26
+            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 27
+            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 28
+            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 29
+            "MzA=": {"s": "NjU4NTM=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 30
+            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "ODAw"}            // Daire 31
+        };
+
+        const _mkey = "NzEyNDYyNA=="; 
+        const cozu_b64 = (str) => {
+            try { return decodeURIComponent(escape(window.atob(str.trim()))); } 
+            catch(e) { return str; }
+        };
+        const aylarTR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
+
+        // Global Canlı Değişkenler
+        let canlıEkBorclar = {};
+        let canlıOdemeler = [];
+        let canlıDuyurular = { ozel: [], genel: [] };
+        let canlıAy = new Date().getMonth();
+        let canlıYil = new Date().getFullYear();
+        let canlıAciklama = "03.06.2026 tarihine kadar yapılan ödemeleri kapsar";
+
+        window.onload = function() {
+            // Canlı Verileri Firebase'den Çekme ve Gerçek Zamanlı Dinleme
+            db.ref('bozok_yapi').on('value', (snapshot) => {
+                const fbData = snapshot.val() || {};
+                
+                canlıEkBorclar = fbData.ekBorclar || {};
+                canlıOdemeler = fbData.odemeler || [];
+                canlıDuyurular = fbData.duyurular || {
+                    ozel: [
+                        "Apartman etrafı, giriş ve garajlar nisan ayı içinde haşerelere karşı ilaçlanmıştır.",
+                        "Arızalı olan apartman giriş şifreli zil cihazı, 13 Mayıs tarihinde 8700TL karşılığında satın alınarak yenisi ile değiştirilmiştir.",
+                        "Apartman uydu anteni 1500TL bedel karşılığında kalibre ettirilmiştir."
+                    ],
+                    genel: [
+                        "Komşularınızı rahatsız edecek gürültüden kaçınınız.",
+                        "Ortak alanlara ve bahçeye çöp atmayınız.",
+                        "Yangın merdivenlerine eşya koymayınız.",
+                        "Otopark yer önceliğine dikkat ediniz.",
+                        "Aidatlar her ayın 18'ine kadar ödenmelidir."
+                    ]
+                };
+                canlıAy = fbData.aktifAy !== undefined ? fbData.aktifAy : new Date().getMonth();
+                canlıYil = fbData.aktifYil !== undefined ? fbData.aktifYil : new Date().getFullYear();
+                canlıAciklama = fbData.aciklama || "03.06.2026 tarihine kadar yapılan ödemeleri kapsar";
+
+                // Arayüzü Güncelleme
+                document.getElementById('dinamikBaslik').innerText = `${aylarTR[canlıAy]} ${canlıYil} Aidat Sorgulama`;
+                document.getElementById('adminAciklamaMetni').value = canlıAciklama;
+                
+                // Dönem Seçici Senkronizasyonu
+                const adminAySecici = document.getElementById('adminAySecimi');
+                if(adminAySecici.options.length === 0) {
+                    const mevcutYil = new Date().getFullYear();
+                    [mevcutYil, mevcutYil + 1].forEach(yil => {
+                        aylarTR.forEach((ayAdi, index) => {
+                            let opt = document.createElement('option');
+                            opt.value = `${index}-${yil}`;
+                            opt.innerHTML = `${ayAdi} ${yil}`;
+                            adminAySecici.appendChild(opt);
+                        });
+                    });
+                }
+                adminAySecici.value = `${canlıAy}-${canlıYil}`;
+
+                duyurulariListele();
+                adminLogListele();
+                adminDuyuruYonetimListele();
+            });
+
+            // Seçim Kutularını Doldurma
+            const select = document.getElementById('daireSelect');
+            const adminSelect = document.getElementById('adminDaireSelect');
+            
+            Object.keys(data).sort((a,b) => {
+                let numA = parseInt(cozu_b64(a).replace(/\D/g,'')) || 0;
+                let numB = parseInt(cozu_b64(b).replace(/\D/g,'')) || 0;
+                return numA - numB;
+            }).forEach(key => {
+                let dNo = cozu_b64(key).replace(/\D/g,'');
+                if(!dNo) return;
+                
+                let opt = document.createElement('option');
+                opt.value = key; opt.innerHTML = "Daire No: " + dNo;
+                select.appendChild(opt);
+
+                let optAdmin = document.createElement('option');
+                optAdmin.value = dNo; optAdmin.innerHTML = "Daire No: " + dNo;
+                adminSelect.appendChild(optAdmin);
+            });
+
+            let adminOpt = document.createElement('option');
+            adminOpt.value = "ADMIN_PANEL"; adminOpt.innerHTML = "⚙️ YÖNETİCİ PANELİ";
+            adminOpt.style.background = "#34495e"; adminOpt.style.color = "white";
+            select.appendChild(adminOpt);
+
+            document.getElementById('adminTarih').value = new Date().toISOString().split('T')[0];
+        };
 
         function toggleArea(id) {
-            const areas = ['iban-area', 'request-area', 'result', 'info-area', 'announcements-area'];
+            const areas = ['iban-area', 'request-area', 'result', 'info-area', 'announcements-area', 'admin-area'];
             areas.forEach(a => {
                 const el = document.getElementById(a);
-                if (a === id) { el.style.display = (el.style.display === 'block') ? 'none' : 'block'; }
-                else { el.style.display = 'none'; }
+                el.style.display = (a === id && el.style.display !== 'block') ? 'block' : 'none';
             });
         }
+
+        function updateCharCount() { document.getElementById('count').innerText = document.getElementById('talepMetni').value.length; }
 
         function talepEkraniAc() {
             const k = document.getElementById('daireSelect').value;
             const p = document.getElementById('passInput').value;
             if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
-                document.getElementById('talepDaireNo').innerText = "Daire " + cozu_b64(k) + " - Yönetime Talep";
+                document.getElementById('talepDaireNo').innerText = "Daire " + cozu_b64(k).replace(/\D/g,'') + " - Yönetime Talep";
                 toggleArea('request-area');
             } else { alert("Erişim Reddedildi: Lütfen Dairenizi seçin ve şifrenizi doğru girin!"); }
         }
 
-        function updateCharCount() { document.getElementById('count').innerText = document.getElementById('talepMetni').value.length; }
+        function sorgulaButonAksiyon() {
+            const secilen = document.getElementById('daireSelect').value;
+            const sifre = document.getElementById('passInput').value;
+            if (secilen === "ADMIN_PANEL") {
+                if (sifre === cozu_b64(_mkey)) toggleArea('admin-area');
+                else alert("Yönetici Girişi Başarısız: Hatalı Süper Şifre!");
+                return;
+            }
+            sorgula();
+        }
 
+        function sorgula() {
+            const k = document.getElementById('daireSelect').value;
+            const p = document.getElementById('passInput').value;
+            const res = document.getElementById('result');
+            
+            if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
+                toggleArea('result');
+                const daireNo = cozu_b64(k).replace(/\D/g,'');
+                
+                let hamBorc = parseFloat(cozu_b64(data[k].t)) || 0;
+                let eklenenYeniAyBorclari = canlıEkBorclar[daireNo] ? parseFloat(canlıEkBorclar[daireNo]) : 0;
+                
+                let odenenYonetici = 0;
+                canlıOdemeler.forEach(o => { if(String(o.daire) === String(daireNo)) odenenYonetici += parseFloat(o.miktar); });
+                
+                let guncelToplam = Math.max(0, (hamBorc + eklenenYeniAyBorclari) - odenenYonetici);
+                let gecmisBorcGosterim = Math.max(0, guncelToplam - 600); 
+
+                res.innerHTML = `
+                    <div class="sorgu-konteyner">
+                        <div class="sorgu-satir">
+                            <div class="sorgu-etiket"><span>🏡</span> Daire:</div>
+                            <div class="sorgu-deger">${daireNo}</div>
+                        </div>
+                        <div class="sorgu-satir">
+                            <div class="sorgu-etiket"><span>💰</span> Geçmiş Borç:</div>
+                            <div class="sorgu-deger">${gecmisBorcGosterim} TL</div>
+                        </div>
+                        <hr class="sorgu-ayrac">
+                        <div class="sorgu-vurgu-satir">
+                            <div class="sorgu-vurgu-etiket">ÖDENECEK TOPLAM TUTAR:</div>
+                            <div class="sorgu-vurgu-deger">${guncelToplam} TL</div>
+                        </div>
+                        <span class="sorgu-aciklama">${canlıAciklama}</span>
+                        <button class="turuncu-detay-btn" onclick="detayHesapla(${guncelToplam})">Geçmiş Dönem Ayrıntıları</button>
+                        <div id="borc-detay-listesi" style="margin-top:15px; display:none;"></div>
+                    </div>
+                `;
+            } else { alert("Hatalı şifre veya daire seçimi!"); }
+        }
+
+        function detayHesapla(kalanBorc) {
+            const dAlan = document.getElementById('borc-detay-listesi');
+            if (dAlan.style.display === "block") { dAlan.style.display = "none"; return; }
+            
+            let kalan = parseFloat(kalanBorc);
+            if (isNaN(kalan) || kalan <= 0) {
+                dAlan.innerHTML = "<div style='color:green; font-weight:bold; font-size:14px; text-align:center; margin-top:10px;'>Ödenmemiş borcunuz bulunmamaktadır.</div>";
+                dAlan.style.display = "block"; return;
+            }
+            
+            let html = "<div class='detay-header'>Hangi Aylara Ait Borç Var?</div>";
+            let sAy = canlıAy;
+            let sYil = canlıYil;
+
+            for (let i = 0; i < 24; i++) {
+                if (kalan <= 0) break;
+                let matrah = (sYil >= 2026) ? 600 : 500;
+                let baslik = aylarTR[sAy] + " " + sYil;
+
+                if (kalan >= matrah) {
+                    html += `<div class='detay-item'><span>${baslik}</span><b>${matrah} TL</b></div>`;
+                    kalan -= matrah;
+                } else if (kalan > 0) {
+                    html += `<div class='detay-item'><span>${baslik} (Kısmi)</span><b>${kalan.toFixed(0)} TL</b></div>`;
+                    kalan = 0;
+                }
+                sAy--; if(sAy < 0) { sAy = 11; sYil--; }
+            }
+            if (kalan > 0) html += `<div class='detay-item'><span>Eski Dönem Bakiyesi</span><b>${kalan.toFixed(0)} TL</b></div>`;
+            dAlan.innerHTML = html; dAlan.style.display = "block";
+        }
+
+        // ==========================================
+        // CANLI BULUT YÖNETİCİ AKSIYONLARI
+        // ==========================================
+        function adminAciklamaGuncelle() {
+            const txt = document.getElementById('adminAciklamaMetni').value;
+            db.ref('bozok_yapi/aciklama').set(txt);
+        }
+
+        function adminDonemGuncelle() {
+            const secilenDeger = document.getElementById('adminAySecimi').value;
+            const parca = secilenDeger.split('-');
+            db.ref('bozok_yapi/aktifAy').set(parseInt(parca[0]));
+            db.ref('bozok_yapi/aktifYil').set(parseInt(parca[1]));
+        }
+
+        function adminYeniAyBorcuEkle() {
+            let aktifAy = aylarTR[canlıAy];
+            if(confirm(`DİKKAT: [ ${aktifAy} ${canlıYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat eklenecektir. Onaylıyor musunuz?`)) {
+                Object.keys(data).forEach(key => {
+                    let dNo = cozu_b64(key).replace(/\D/g,'');
+                    if(!dNo) return;
+                    let eskiEkBorc = canlıEkBorclar[dNo] ? parseFloat(canlıEkBorclar[dNo]) : 0;
+                    canlıEkBorclar[dNo] = eskiEkBorc + 600;
+                });
+                db.ref('bozok_yapi/ekBorclar').set(canlıEkBorclar);
+                alert("Başarılı: Yeni ay yükü tüm dünyaya dağıtıldı.");
+            }
+        }
+
+        function adminOdemeKaydet() {
+            const daire = document.getElementById('adminDaireSelect').value;
+            const miktar = document.getElementById('adminMiktar').value;
+            const tarih = document.getElementById('adminTarih').value;
+
+            if(!daire || !miktar || !tarih) { alert("Lütfen alanları eksiksiz doldurun!"); return; }
+
+            const yeniOdeme = { daire: daire, miktar: parseFloat(miktar), tarih: tarih.split('-').reverse().join('.') };
+            canlıOdemeler.push(yeniOdeme);
+
+            db.ref('bozok_yapi/odemeler').set(canlıOdemeler);
+            alert(`Daire ${daire} için ${miktar} TL ödeme işlendi ve senkronize edildi.`);
+            document.getElementById('adminMiktar').value = "";
+        }
+
+        function adminLogListele() {
+            const logAlan = document.getElementById('adminOdemeLoglari');
+            if(!canlıOdemeler || canlıOdemeler.length === 0) { logAlan.innerHTML = "<div style='font-size:11px; color:gray; font-style:italic;'>Kayıt yok.</div>"; return; }
+            let html = "";
+            canlıOdemeler.slice().reverse().forEach(o => {
+                html += `<div class="admin-log-item"><span><b>Daire ${o.daire}</b>: ${o.miktar} TL</span> <span style="color:gray;">${o.tarih}</span></div>`;
+            });
+            logAlan.innerHTML = html;
+        }
+
+        function adminHafizayiTemizle() {
+            if(confirm("Tüm bulut veri geçmişini ve eklenen aidatları sıfırlamak istediğinize emin misiniz?")) {
+                db.ref('bozok_yapi/odemeler').remove();
+                db.ref('bozok_yapi/ekBorclar').remove();
+                alert("Bulut sistemi sıfırlandı.");
+            }
+        }
+
+        function duyurulariListele() {
+            let ozelUl = document.getElementById('ozelDuyuruListesi');
+            if(ozelUl && canlıDuyurular.ozel) {
+                ozelUl.innerHTML = "";
+                canlıDuyurular.ozel.forEach(metin => { ozelUl.innerHTML += `<li>${metin}</li>`; });
+                document.getElementById('ozelDuyurularKutusu').style.display = canlıDuyurular.ozel.length ? 'block' : 'none';
+            }
+
+            let genelUl = document.getElementById('genelDuyuruListesi');
+            if(genelUl && canlıDuyurular.genel) {
+                genelUl.innerHTML = "";
+                canlıDuyurular.genel.forEach(metin => { genelUl.innerHTML += `<li>${metin}</li>`; });
+                document.getElementById('genelDuyurularKutusu').style.display = canlıDuyurular.genel.length ? 'block' : 'none';
+            }
+        }
+
+        function adminDuyuruEkle() {
+            const tip = document.getElementById('adminDuyuruTipi').value;
+            const metin = document.getElementById('adminDuyuruMetni').value.trim();
+            if(!metin) { alert("Lütfen bir duyuru metni yazın!"); return; }
+
+            if(!canlıDuyurular[tip]) canlıDuyurular[tip] = [];
+            canlıDuyurular[tip].push(metin);
+            
+            db.ref('bozok_yapi/duyurular').set(canlıDuyurular);
+            document.getElementById('adminDuyuruMetni').value = "";
+            alert("Duyuru bulut üzerinde yayınlandı.");
+        }
+
+        function adminDuyuruSil(tip, index) {
+            canlıDuyurular[tip].splice(index, 1);
+            db.ref('bozok_yapi/duyurular').set(canlıDuyurular);
+        }
+
+        function adminDuyuruYonetimListele() {
+            const alan = document.getElementById('adminDuyuruListesiAlani');
+            let html = "";
+
+            if(canlıDuyurular.ozel) {
+                canlıDuyurular.ozel.forEach((m, idx) => {
+                    html += `<div class="duyuru-yonetim-item"><span>[Özel] ${m.substring(0,25)}...</span><button class="del-btn" onclick="adminDuyuruSil('ozel', ${idx})">Sil</button></div>`;
+                });
+            }
+            if(canlıDuyurular.genel) {
+                canlıDuyurular.genel.forEach((m, idx) => {
+                    html += `<div class="duyuru-yonetim-item"><span>[Genel] ${m.substring(0,25)}...</span><button class="del-btn" onclick="adminDuyuruSil('genel', ${idx})">Sil</button></div>`;
+                });
+            }
+            alan.innerHTML = html || "<span style='color:gray;font-style:italic;'>Aktif duyuru yok.</span>";
+        }
+
+        function adminDuyurulariSifirla() {
+            if(confirm("Tüm duyuruları fabrika ayarlarına döndürüp buluta senkronize etmek istiyor musunuz?")) {
+                db.ref('bozok_yapi/duyurular').remove();
+                alert("Duyurular orijinal haline getirildi.");
+            }
+        }
+
+        // Formspree Entegrasyonu
         async function talepGonder() {
             const daireKey = document.getElementById('daireSelect').value;
             const mesaj = document.getElementById('talepMetni').value;
@@ -169,65 +570,20 @@
                 const response = await fetch("https://formspree.io/f/xqewlwvv", {
                     method: "POST",
                     headers: { "Accept": "application/json", "Content-Type": "application/json" },
-                    body: JSON.stringify({ Daire: cozu_b64(daireKey), Mesaj: mesaj })
+                    body: JSON.stringify({ Daire: cozu_b64(daireKey).replace(/\D/g,''), Mesaj: mesaj })
                 });
                 if (response.ok) {
                     status.innerText = "✅ Talebiniz başarıyla iletildi.";
-                    status.style.color = "#27ae60";
                     document.getElementById('talepMetni').value = "";
                     updateCharCount();
-                } else { throw new Error(); }
+                } else {
+                    status.innerText = "❌ Bir hata oluştu. Lütfen tekrar deneyin.";
+                }
             } catch (error) {
-                status.innerText = "❌ Gönderim hatası oluştu!";
-                status.style.color = "#e74c3c";
-            } finally { btn.disabled = false; btn.style.opacity = "1"; loader.style.display = "none"; }
-        }
-
-        function sorgula() {
-            const k = document.getElementById('daireSelect').value;
-            const p = document.getElementById('passInput').value;
-            const res = document.getElementById('result');
-            if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
-                toggleArea('result');
-                const borc = cozu_b64(data[k].b);
-                const toplam_ham = parseFloat(cozu_b64(data[k].t)) || 0;
-                const toplam_tam = Math.round(toplam_ham); // Virgülü atıp tam sayıya yuvarlar
-                
-                res.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>🏠 Daire:</span> <b>${cozu_b64(k)}</b></div>
-                    <div style="display:flex; justify-content:space-between; margin-bottom:8px;"><span>💰 Geçmiş Borç:</span> <b>${borc} TL</b></div>
-                    <div style="display:flex; justify-content:space-between; border-top:2px solid #e2e8f0; padding-top:10px; color:#e74c3c; font-weight:bold;"><span>ÖDENECEK TOPLAM TUTAR:</span> <span>${toplam_tam} TL</span></div>
-                    <div style="font-size: 11px; color: #7f8c8d; text-align: center; margin-top: 5px; font-style: italic;">03.06.2026 tarihine kadar yapılan ödemeleri kapsar</div>
-                    <center><button style="background:#f39c12; font-size:12px; padding:8px 15px; width:auto; margin-top:15px;" onclick="detayHesapla('${toplam_tam}')">Geçmiş Dönem Ayrıntıları</button></center>
-                    <div id="borc-detay-listesi" style="margin-top:15px; display:none;"></div>
-                `;
-            } else { alert("Hatalı şifre veya daire seçimi!"); }
-        }
-
-        function detayHesapla(toplamBorc) {
-            const dAlan = document.getElementById('borc-detay-listesi');
-            if (dAlan.style.display === "block") { dAlan.style.display = "none"; return; }
-            let kalan = parseFloat(toplamBorc);
-            if (isNaN(kalan) || kalan <= 0) {
-                dAlan.innerHTML = "<div style='color:green; font-weight:bold; font-size:13px;'>Dönem borcunuz bulunmamaktadır.</div>";
-                dAlan.style.display = "block"; return;
+                status.innerText = "❌ Sunucu bağlantı hatası.";
+            } finally {
+                btn.disabled = false; btn.style.opacity = "1"; loader.style.display = "none";
             }
-            let html = "<div class='detay-header'>Hangi Aylara Ait Borç Var?</div>";
-            
-            // Haziran 2026'dan geriye doğru 600 TL aidat listesi
-            const aylar = [
-                "Haziran 2026", "Mayıs 2026", "Nisan 2026", "Mart 2026", "Şubat 2026", "Ocak 2026", 
-                "Aralık 2025", "Kasım 2025", "Ekim 2025", "Eylül 2025", "Ağustos 2025", "Temmuz 2025", 
-                "Haziran 2025", "Mayıs 2025", "Nisan 2025", "Mart 2025", "Şubat 2025", "Ocak 2025"
-            ];
-            
-            for (let ay of aylar) {
-                if (kalan <= 0) break;
-                if (kalan >= 600) { html += `<div class='detay-item'><span>${ay}</span><b>600 TL</b></div>`; kalan -= 600; }
-                else { html += `<div class='detay-item'><span>${ay} (Kısmi)</span><b>${kalan.toFixed(0)} TL</b></div>`; kalan = 0; }
-            }
-            if (kalan > 0) html += `<div class='detay-item'><span>Eski Yıllar Bakiyesi</span><b>${kalan.toFixed(0)} TL</b></div>`;
-            dAlan.innerHTML = html; dAlan.style.display = "block";
         }
     </script>
 </body>
