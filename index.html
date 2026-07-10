@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
+    <!-- Firebase SDK Bağlantıları -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        /* Şık ve Modern Geçişli Arka Plan Gradyanı Eklendi */
+        /* Çerçeve dışı orijinal sade rengine geri döndürüldü */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%);
-            background-attachment: fixed;
+            background-color: #f4f6f9; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -23,11 +23,12 @@
             box-sizing: border-box; 
         }
         
+        /* Ana sayfadaki açık mavi kart, profesyonel geçişli (gradient) hale getirildi */
         .card { 
-            background: linear-gradient(145deg, #e1f5fe, #f0faff); 
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdfa 50%, #e0f2fe 100%); 
             padding: 35px 20px; 
             border-radius: 25px; 
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
@@ -237,7 +238,7 @@
             "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 14
             "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 15
             "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "NzAw"},           // Daire 16
-            "MTc=": {"s": "NDU4Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},       // Daire 17
+            "MTc=": {"s": "NDU8Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},       // Daire 17
             "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 18
             "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 19
             "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20
@@ -363,7 +364,7 @@
             if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
                 document.getElementById('talepDaireNo').innerText = "Daire " + cozu_b64(k).replace(/\D/g,'') + " - Yönetime Talep";
                 toggleArea('request-area');
-            } else { alert("Erişim Reddedildi: Lütfen Dairenizi seçin ve şifrenizi doğru girin!"); }
+            } else { alert("Erişim Reddedildi: Lütfen Dairenizi seçin og şifrenizi doğru girin!"); }
         }
 
         function sorgulaButonAksiyon() {
