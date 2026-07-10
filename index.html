@@ -8,13 +8,26 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #f0f4f8; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; margin: 0; padding: 20px 10px; box-sizing: border-box; }
+        /* Şık ve Modern Geçişli Arka Plan Gradyanı Eklendi */
+        body { 
+            font-family: 'Segoe UI', Tahoma, sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #3b82f6 100%);
+            background-attachment: fixed;
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: flex-start; 
+            min-height: 100vh; 
+            margin: 0; 
+            padding: 20px 10px; 
+            box-sizing: border-box; 
+        }
         
         .card { 
             background: linear-gradient(145deg, #e1f5fe, #f0faff); 
             padding: 35px 20px; 
             border-radius: 25px; 
-            box-shadow: 0 15px 35px rgba(32, 82, 149, 0.15); 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
@@ -92,7 +105,7 @@
 </head>
 <body>
     <div class="card">
-        <h2>🏢 BOZOK YAPI</h2>
+        <h2>BOZOK YAPI</h2>
         <div class="sub-title" id="dinamikBaslik">Aidat Sorgulama</div>
         
         <select id="daireSelect">
@@ -265,7 +278,7 @@
                 canlıOdemeler = fbData.odemeler || [];
                 canlıDuyurular = fbData.duyurular || {
                     ozel: [
-                        "Apartman etrafı, giriş ve garajlar nisan ayı içinde haşerelere karşı ilaçlanmıştır.",
+                        "Apartman etrafı, giriş and garajlar nisan ayı içinde haşerelere karşı ilaçlanmıştır.",
                         "Arızalı olan apartman giriş şifreli zil cihazı, 13 Mayıs tarihinde 8700TL karşılığında satın alınarak yenisi ile değiştirilmiştir.",
                         "Apartman uydu anteni 1500TL bedel karşılığında kalibre ettirilmiştir."
                     ],
