@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
-    <!-- Firebase SDK Bağlantıları -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        /* Çerçeve dışı orijinal sade, beyaza yakın rengine geri döndürüldü */
+        /* Çerçeve dışı orijinal sade, beyaza yakın zemin */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
             background-color: #f4f6f9 !important; 
@@ -23,40 +22,42 @@
             box-sizing: border-box; 
         }
         
-        /* Ana sayfadaki açık mavi kart, profesyonel geçişli (gradient) hale getirildi */
+        /* Ana sorgulama kartı - Belirgin Koyu Mavi & Mavi Renk Geçişi (Premium Gradient) */
         .card { 
-            background: #e0f2fe !important; /* Tarayıcı geçişi desteklemezse çalışacak ana renk */
-            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdfa 45%, #eefcff 75%, #d0e7f7 100%) !important; 
+            background: #1a365d !important; /* Tarayıcı gradient desteklemezse çalışacak ana renk */
+            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0d9488 100%) !important; 
             padding: 35px 20px; 
             border-radius: 25px; 
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
             margin-bottom: 20px;
-            border: 4px solid #205295; 
+            border: 4px solid #ffffff; /* Koyu zemin üzerine beyaz şık çerçeve */
             box-sizing: border-box;
             min-height: 700px;
             position: relative;
         }
         
-        h2 { color: #205295; margin-bottom: 5px; font-size: 24px; letter-spacing: 1.5px; font-weight: 900; text-transform: uppercase; }
-        .sub-title { color: #546e7a; font-size: 14px; margin-bottom: 30px; font-weight: 600; }
+        /* Koyu zemin üzerinde yazıların okunabilmesi için renk düzenlemeleri */
+        h2 { color: #ffffff; margin-bottom: 5px; font-size: 26px; letter-spacing: 2px; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .sub-title { color: #93c5fd; font-size: 15px; margin-bottom: 30px; font-weight: 600; letter-spacing: 0.5px; }
         
-        select, input, textarea { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #cfd8dc; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; -webkit-appearance: none; background: white; transition: 0.3s; }
-        select:focus, input:focus, textarea:focus { border-color: #3498db; box-shadow: 0 0 8px rgba(52, 152, 219, 0.2); }
+        select, input, textarea { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; -webkit-appearance: none; background: white; transition: 0.3s; color: #1e293b; }
+        select:focus, input:focus, textarea:focus { border-color: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); }
         
         #passInput { margin-bottom: 40px; }
         
-        button { width: 100%; padding: 15px; background-color: #3498db; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        /* Butonlar koyu renk geçişi üzerinde daha canlı hale getirildi */
+        button { width: 100%; padding: 15px; background-color: #3b82f6; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
         button:active { transform: scale(0.98); }
         
-        .iban-btn { background-color: #2ecc71; font-size: 14px; padding: 13px; }
-        .request-btn { background-color: #f488d6; font-size: 14px; padding: 13px; color: #fff; }
-        .info-btn { background-color: #f39c12; font-size: 14px; padding: 13px; }
-        .announcement-btn { background-color: #ef597c; font-size: 14px; padding: 13px; }
+        .iban-btn { background-color: #10b981; font-size: 14px; padding: 13px; }
+        .request-btn { background-color: #ec4899; font-size: 14px; padding: 13px; color: #fff; }
+        .info-btn { background-color: #f59e0b; font-size: 14px; padding: 13px; }
+        .announcement-btn { background-color: #f43f5e; font-size: 14px; padding: 13px; }
         
-        #result, #iban-area, #request-area, #info-area, #announcements-area, #admin-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 1.5px solid #205295; animation: fadeIn 0.4s ease-out; }
+        #result, #iban-area, #request-area, #info-area, #announcements-area, #admin-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 2px solid #1e3a8a; animation: fadeIn 0.4s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
         
         .info-list { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.6; }
         .info-list li { margin-bottom: 10px; }
@@ -99,6 +100,7 @@
 
         /* Yönetici Paneli Ek Stilleri */
         .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between; align-items: center;}
+        .admin-log-item.login-log { border-left-color: #3b82f6; background: #eff6ff; }
         .admin-section-title { font-size: 12px; font-weight: bold; color: #205295; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 3px; }
         .admin-btn-sm { background-color: #34495e; padding: 8px; font-size: 12px; margin-top: 5px; width: auto; display: inline-block; margin-right: 5px; }
         .duyuru-yonetim-item { display: flex; justify-content: space-between; align-items: center; background: #fdfefe; border: 1px solid #e2e8f0; padding: 6px; margin-bottom: 4px; border-radius: 8px; font-size: 11px; }
@@ -107,7 +109,7 @@
 </head>
 <body>
     <div class="card">
-        <h2>🏢 BOZOK YAPI</h2>
+        <h2>BOZOK YAPI</h2>
         <div class="sub-title" id="dinamikBaslik">Aidat Sorgulama</div>
         
         <select id="daireSelect">
@@ -157,7 +159,11 @@
 
             <div class="admin-section-title">📋 Son Girilen Ödemeler</div>
             <div id="adminOdemeLoglari"></div>
-            <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 8px; width: auto;" onclick="adminHafizayiTemizle()">Tüm Canlı Ödemeleri ve Ek Borçları Sıfırla</button>
+
+            <div class="admin-section-title">👤 Sakin Giriş Logları (Son 20 Giriş)</div>
+            <div id="adminGirisLoglari"></div>
+
+            <button style="background: #e74c3c; font-size: 11px; padding: 5px; margin-top: 15px; width: 100%;" onclick="adminHafizayiTemizle()">Tüm Canlı Ödemeleri, Ek Borçları ve Giriş Loglarını Sıfırla</button>
         </div>
 
         <div id="iban-area">
@@ -234,7 +240,7 @@
             "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 9
             "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 10
             "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 11
-            "MTI=": {"s": "NDU4MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
+            "MTI=": {"s": "NDU0MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
             "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 13
             "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 14
             "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 15
@@ -250,7 +256,7 @@
             "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 25
             "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 26
             "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 27
-            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MTIwMA=="},                    // Daire 28
+            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 28
             "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 29
             "MzA=": {"s": "NjU4NTM=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 30
             "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "ODAw"}            // Daire 31
@@ -266,6 +272,7 @@
         // Global Canlı Değişkenler
         let canlıEkBorclar = {};
         let canlıOdemeler = [];
+        let canlıGirisler = []; // Yeni log değişkeni
         let canlıDuyurular = { ozel: [], genel: [] };
         let canlıAy = new Date().getMonth();
         let canlıYil = new Date().getFullYear();
@@ -278,6 +285,7 @@
                 
                 canlıEkBorclar = fbData.ekBorclar || {};
                 canlıOdemeler = fbData.odemeler || [];
+                canlıGirisler = fbData.girisLoglari || []; // Yeni log verisi çekimi
                 canlıDuyurular = fbData.duyurular || {
                     ozel: [
                         "Apartman etrafı, giriş and garajlar nisan ayı içinde haşerelere karşı ilaçlanmıştır.",
@@ -317,6 +325,7 @@
 
                 duyurulariListele();
                 adminLogListele();
+                adminGirisLogListele(); // Ziyaretçi log listeleme tetikleyicisi
                 adminDuyuruYonetimListele();
             });
 
@@ -379,6 +388,26 @@
             sorgula();
         }
 
+        // YENİ EK BİRLEŞEN: GİRİŞ SAAT VE GÜNÜNÜ BULUTA YAZAN FONKSİYON
+        function girisLogunuKaydet(daireNo) {
+            const simdi = new Date();
+            const gun = String(simdi.getDate()).padStart(2, '0');
+            const ay = String(simdi.getMonth() + 1).padStart(2, '0');
+            const yil = simdi.getFullYear();
+            const saat = String(simdi.getHours()).padStart(2, '0');
+            const dakika = String(simdi.getMinutes()).padStart(2, '0');
+            
+            const zamanMetni = `${gun}.${ay}.${yil} - ${saat}:${dakika}`;
+            const yeniLog = { daire: daireNo, zaman: zamanMetni };
+            
+            // Son 20 logu tutmak için dizi yönetimi
+            if (!canlıGirisler) canlıGirisler = [];
+            canlıGirisler.push(yeniLog);
+            if (canlıGirisler.length > 20) canlıGirisler.shift(); // En eskiyi siler
+            
+            db.ref('bozok_yapi/girisLoglari').set(canlıGirisler);
+        }
+
         function sorgula() {
             const k = document.getElementById('daireSelect').value;
             const p = document.getElementById('passInput').value;
@@ -387,6 +416,9 @@
             if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
                 toggleArea('result');
                 const daireNo = cozu_b64(k).replace(/\D/g,'');
+                
+                // Başarılı girişte log kaydetme tetikleyicisi
+                girisLogunuKaydet(daireNo);
                 
                 let hamBorc = parseFloat(cozu_b64(data[k].t)) || 0;
                 let eklenenYeniAyBorclari = canlıEkBorclar[daireNo] ? parseFloat(canlıEkBorclar[daireNo]) : 0;
@@ -506,11 +538,23 @@
             logAlan.innerHTML = html;
         }
 
+        // YENİ ÖZELLİK: GİRİŞ LOGLARINI PANELDE LİSTELEME
+        function adminGirisLogListele() {
+            const girisAlan = document.getElementById('adminGirisLoglari');
+            if(!canlıGirisler || canlıGirisler.length === 0) { girisAlan.innerHTML = "<div style='font-size:11px; color:gray; font-style:italic;'>Henüz giriş yapan olmadı.</div>"; return; }
+            let html = "";
+            canlıGirisler.slice().reverse().forEach(g => {
+                html += `<div class="admin-log-item login-log"><span>👤 <b>Daire No: ${g.daire}</b> sisteme giriş yaptı.</span> <span style="color:#2563eb; font-weight:500;">${g.zaman}</span></div>`;
+            });
+            girisAlan.innerHTML = html;
+        }
+
         function adminHafizayiTemizle() {
-            if(confirm("Tüm bulut veri geçmişini ve eklenen aidatları sıfırlamak istediğinize emin misiniz?")) {
+            if(confirm("Tüm bulut veri geçmişini, eklenen aidatları ve giriş loglarını sıfırlamak istediğinize emin misiniz?")) {
                 db.ref('bozok_yapi/odemeler').remove();
                 db.ref('bozok_yapi/ekBorclar').remove();
-                alert("Bulut sistemi sıfırlandı.");
+                db.ref('bozok_yapi/girisLoglari').remove(); // Ziyaretçi loglarını sıfırlama kodu
+                alert("Bulut sistemi tamamen sıfırlandı.");
             }
         }
 
