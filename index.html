@@ -9,10 +9,10 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        /* Çerçeve dışı orijinal sade rengine geri döndürüldü */
+        /* Çerçeve dışı orijinal sade, beyaza yakın rengine geri döndürüldü */
         body { 
             font-family: 'Segoe UI', Tahoma, sans-serif; 
-            background-color: #f4f6f9; 
+            background-color: #f4f6f9 !important; 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
@@ -25,7 +25,8 @@
         
         /* Ana sayfadaki açık mavi kart, profesyonel geçişli (gradient) hale getirildi */
         .card { 
-            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdfa 50%, #e0f2fe 100%); 
+            background: #e0f2fe !important; /* Tarayıcı geçişi desteklemezse çalışacak ana renk */
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0fdfa 45%, #eefcff 75%, #d0e7f7 100%) !important; 
             padding: 35px 20px; 
             border-radius: 25px; 
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); 
@@ -233,7 +234,7 @@
             "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 9
             "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 10
             "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 11
-            "MTI=": {"s": "NDU0MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
+            "MTI=": {"s": "NDU4MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
             "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 13
             "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 14
             "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 15
@@ -241,7 +242,7 @@
             "MTc=": {"s": "NDU8Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},       // Daire 17
             "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 18
             "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 19
-            "MjA=": {"s": "ODM1MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20
+            "MjA=": {"s": "ODM5MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20
             "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 21
             "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 22
             "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 23
@@ -249,7 +250,7 @@
             "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 25
             "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 26
             "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 27
-            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 28
+            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MTIwMA=="},                    // Daire 28
             "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 29
             "MzA=": {"s": "NjU4NTM=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 30
             "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "ODAw"}            // Daire 31
@@ -364,7 +365,7 @@
             if (data[k] && (cozu_b64(data[k].s) === p || p === cozu_b64(_mkey))) {
                 document.getElementById('talepDaireNo').innerText = "Daire " + cozu_b64(k).replace(/\D/g,'') + " - Yönetime Talep";
                 toggleArea('request-area');
-            } else { alert("Erişim Reddedildi: Lütfen Dairenizi seçin og şifrenizi doğru girin!"); }
+            } else { alert("Erişim Reddedildi: Lütfen Dairenizi seçin ve şifrenizi doğru girin!"); }
         }
 
         function sorgulaButonAksiyon() {
