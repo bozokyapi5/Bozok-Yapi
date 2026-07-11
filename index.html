@@ -22,42 +22,42 @@
             box-sizing: border-box; 
         }
         
-        /* Ana sorgulama kartı - Belirgin Koyu Mavi & Mavi Renk Geçişi (Premium Gradient) */
+        /* Ana sorgulama kartı - Ferah ve Canlı Okyanus Renk Geçişi (Vibrant Ocean) */
         .card { 
-            background: #1a365d !important; /* Tarayıcı gradient desteklemezse çalışacak ana renk */
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #0d9488 100%) !important; 
+            background: #2563eb !important; /* Tarayıcı gradient desteklemezse çalışacak ana renk */
+            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 45%, #06b6d4 100%) !important; 
             padding: 35px 20px; 
             border-radius: 25px; 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); 
+            box-shadow: 0 20px 45px rgba(37, 99, 235, 0.2); 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
             margin-bottom: 20px;
-            border: 4px solid #ffffff; /* Koyu zemin üzerine beyaz şık çerçeve */
+            border: 4px solid #ffffff; /* Parlak zemin üzerine beyaz şık çerçeve */
             box-sizing: border-box;
             min-height: 700px;
             position: relative;
         }
         
-        /* Koyu zemin üzerinde yazıların okunabilmesi için renk düzenlemeleri */
-        h2 { color: #ffffff; margin-bottom: 5px; font-size: 26px; letter-spacing: 2px; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .sub-title { color: #93c5fd; font-size: 15px; margin-bottom: 30px; font-weight: 600; letter-spacing: 0.5px; }
+        /* Yeni renk geçişiyle uyumlu, temiz yazı tasarımları */
+        h2 { color: #ffffff; margin-bottom: 5px; font-size: 26px; letter-spacing: 2px; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .sub-title { color: #e0f2fe; font-size: 15px; margin-bottom: 30px; font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         
         select, input, textarea { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; -webkit-appearance: none; background: white; transition: 0.3s; color: #1e293b; }
         select:focus, input:focus, textarea:focus { border-color: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); }
         
         #passInput { margin-bottom: 40px; }
         
-        /* Butonlar koyu renk geçişi üzerinde daha canlı hale getirildi */
-        button { width: 100%; padding: 15px; background-color: #3b82f6; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        /* Buton renkleri yeni geçişe uyumlu olarak dengelendi */
+        button { width: 100%; padding: 15px; background-color: #1e3a8a; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
         button:active { transform: scale(0.98); }
         
-        .iban-btn { background-color: #10b981; font-size: 14px; padding: 13px; }
-        .request-btn { background-color: #ec4899; font-size: 14px; padding: 13px; color: #fff; }
-        .info-btn { background-color: #f59e0b; font-size: 14px; padding: 13px; }
-        .announcement-btn { background-color: #f43f5e; font-size: 14px; padding: 13px; }
+        .iban-btn { background-color: #0d9488; font-size: 14px; padding: 13px; }
+        .request-btn { background-color: #db2777; font-size: 14px; padding: 13px; color: #fff; }
+        .info-btn { background-color: #d97706; font-size: 14px; padding: 13px; }
+        .announcement-btn { background-color: #e11d48; font-size: 14px; padding: 13px; }
         
-        #result, #iban-area, #request-area, #info-area, #announcements-area, #admin-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 2px solid #1e3a8a; animation: fadeIn 0.4s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
+        #result, #iban-area, #request-area, #info-area, #announcements-area, #admin-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 2px solid #2563eb; animation: fadeIn 0.4s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
         
         .info-list { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.6; }
         .info-list li { margin-bottom: 10px; }
@@ -109,7 +109,7 @@
 </head>
 <body>
     <div class="card">
-        <h2>🏢 BOZOK YAPI</h2>
+        <h2>🏢​ BOZOK YAPI</h2>
         <div class="sub-title" id="dinamikBaslik">Aidat Sorgulama</div>
         
         <select id="daireSelect">
@@ -130,7 +130,7 @@
             
             <div class="admin-section-title">📝 Sorgulama Açıklama Metni</div>
             <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Sakinler sorgulama yaptığında borcun altında yazacak bilgilendirme yazısı:</p>
-            <input type="text" id="adminAciklamaMetni" placeholder="Örn: 02.07.2026 tarihine kadar yapılan ödemeleri kapsar" oninput="adminAciklamaGuncelle()">
+            <input type="text" id="adminAciklamaMetni" placeholder="Örn: 03.06.2026 tarihine kadar yapılan ödemeleri kapsar" oninput="adminAciklamaGuncelle()">
 
             <div class="admin-section-title">📅 Ana Sayfa Aktif Dönem Seçimi</div>
             <select id="adminAySecimi" onchange="adminDonemGuncelle()"></select>
@@ -240,7 +240,7 @@
             "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 9
             "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 10
             "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 11
-            "MTI=": {"s": "NDU0MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
+            "MTI=": {"s": "NDU4MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
             "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 13
             "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 14
             "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 15
@@ -248,8 +248,8 @@
             "MTc=": {"s": "NDU8Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},       // Daire 17
             "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 18
             "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 19
-            "MjA=": {"s": "ODM5MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20
-            "MjE=": {"s": "MTI4NzY=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 21
+            "MjA=": {"s": "ODM9MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20
+            "MjE=": {"s": "MTI8NzY=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 21
             "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 22
             "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 23
             "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 24
@@ -272,7 +272,7 @@
         // Global Canlı Değişkenler
         let canlıEkBorclar = {};
         let canlıOdemeler = [];
-        let canlıGirisler = []; // Yeni log değişkeni
+        let canlıGirisler = [];
         let canlıDuyurular = { ozel: [], genel: [] };
         let canlıAy = new Date().getMonth();
         let canlıYil = new Date().getFullYear();
@@ -285,7 +285,7 @@
                 
                 canlıEkBorclar = fbData.ekBorclar || {};
                 canlıOdemeler = fbData.odemeler || [];
-                canlıGirisler = fbData.girisLoglari || []; // Yeni log verisi çekimi
+                canlıGirisler = fbData.girisLoglari || [];
                 canlıDuyurular = fbData.duyurular || {
                     ozel: [
                         "Apartman etrafı, giriş and garajlar nisan ayı içinde haşerelere karşı ilaçlanmıştır.",
@@ -325,7 +325,7 @@
 
                 duyurulariListele();
                 adminLogListele();
-                adminGirisLogListele(); // Ziyaretçi log listeleme tetikleyicisi
+                adminGirisLogListele();
                 adminDuyuruYonetimListele();
             });
 
@@ -388,7 +388,6 @@
             sorgula();
         }
 
-        // YENİ EK BİRLEŞEN: GİRİŞ SAAT VE GÜNÜNÜ BULUTA YAZAN FONKSİYON
         function girisLogunuKaydet(daireNo) {
             const simdi = new Date();
             const gun = String(simdi.getDate()).padStart(2, '0');
@@ -400,10 +399,9 @@
             const zamanMetni = `${gun}.${ay}.${yil} - ${saat}:${dakika}`;
             const yeniLog = { daire: daireNo, zaman: zamanMetni };
             
-            // Son 20 logu tutmak için dizi yönetimi
             if (!canlıGirisler) canlıGirisler = [];
             canlıGirisler.push(yeniLog);
-            if (canlıGirisler.length > 20) canlıGirisler.shift(); // En eskiyi siler
+            if (canlıGirisler.length > 20) canlıGirisler.shift();
             
             db.ref('bozok_yapi/girisLoglari').set(canlıGirisler);
         }
@@ -417,7 +415,6 @@
                 toggleArea('result');
                 const daireNo = cozu_b64(k).replace(/\D/g,'');
                 
-                // Başarılı girişte log kaydetme tetikleyicisi
                 girisLogunuKaydet(daireNo);
                 
                 let hamBorc = parseFloat(cozu_b64(data[k].t)) || 0;
@@ -538,7 +535,6 @@
             logAlan.innerHTML = html;
         }
 
-        // YENİ ÖZELLİK: GİRİŞ LOGLARINI PANELDE LİSTELEME
         function adminGirisLogListele() {
             const girisAlan = document.getElementById('adminGirisLoglari');
             if(!canlıGirisler || canlıGirisler.length === 0) { girisAlan.innerHTML = "<div style='font-size:11px; color:gray; font-style:italic;'>Henüz giriş yapan olmadı.</div>"; return; }
@@ -553,7 +549,7 @@
             if(confirm("Tüm bulut veri geçmişini, eklenen aidatları ve giriş loglarını sıfırlamak istediğinize emin misiniz?")) {
                 db.ref('bozok_yapi/odemeler').remove();
                 db.ref('bozok_yapi/ekBorclar').remove();
-                db.ref('bozok_yapi/girisLoglari').remove(); // Ziyaretçi loglarını sıfırlama kodu
+                db.ref('bozok_yapi/girisLoglari').remove();
                 alert("Bulut sistemi tamamen sıfırlandı.");
             }
         }
