@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
+    <!-- Firebase SDK Bağlantıları -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
@@ -24,7 +25,7 @@
         
         /* Ana sorgulama kartı - Ferah ve Canlı Okyanus Renk Geçişi (Vibrant Ocean) */
         .card { 
-            background: #2563eb !important; /* Tarayıcı gradient desteklemezse çalışacak ana renk */
+            background: #2563eb !important; 
             background: linear-gradient(135deg, #2563eb 0%, #3b82f6 45%, #06b6d4 100%) !important; 
             padding: 35px 20px; 
             border-radius: 25px; 
@@ -33,13 +34,12 @@
             max-width: 400px; 
             text-align: center; 
             margin-bottom: 20px;
-            border: 4px solid #ffffff; /* Parlak zemin üzerine beyaz şık çerçeve */
+            border: 4px solid #ffffff; 
             box-sizing: border-box;
             min-height: 700px;
             position: relative;
         }
         
-        /* Yeni renk geçişiyle uyumlu, temiz yazı tasarımları */
         h2 { color: #ffffff; margin-bottom: 5px; font-size: 26px; letter-spacing: 2px; font-weight: 900; text-transform: uppercase; text-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .sub-title { color: #e0f2fe; font-size: 15px; margin-bottom: 30px; font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         
@@ -48,8 +48,8 @@
         
         #passInput { margin-bottom: 40px; }
         
-        /* Buton renkleri yeni geçişe uyumlu olarak dengelendi */
-        button { width: 100%; padding: 15px; background-color: #1e3a8a; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        /* Buton renkleri - SORGULA butonu eski sevilen rengine döndürüldü */
+        button { width: 100%; padding: 15px; background-color: #2c3e50; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
         button:active { transform: scale(0.98); }
         
         .iban-btn { background-color: #0d9488; font-size: 14px; padding: 13px; }
@@ -76,7 +76,6 @@
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         
-        /* İdeal Tasarım Ölçüleri */
         .sorgu-konteyner { background: #ffffff; padding: 5px 2px; }
         .sorgu-satir { display: flex; justify-content: space-between; align-items: center; font-size: 16px; color: #2c3e50; margin-bottom: 10px; }
         .sorgu-etiket { display: flex; align-items: center; font-weight: 500; color: #1e293b; }
@@ -98,7 +97,6 @@
         .detay-item span { font-weight: 500; }
         .detay-item b { font-weight: 700; color: #000000; }
 
-        /* Yönetici Paneli Ek Stilleri */
         .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between; align-items: center;}
         .admin-log-item.login-log { border-left-color: #3b82f6; background: #eff6ff; }
         .admin-section-title { font-size: 12px; font-weight: bold; color: #205295; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 3px; }
@@ -109,7 +107,7 @@
 </head>
 <body>
     <div class="card">
-        <h2>🏢​ BOZOK YAPI</h2>
+        <h2>BOZOK YAPI</h2>
         <div class="sub-title" id="dinamikBaslik">Aidat Sorgulama</div>
         
         <select id="daireSelect">
@@ -212,9 +210,6 @@
     </div>
 
     <script>
-        // =========================================================================
-        // ENTEGRE EDİLEN FİREBASE CANLI VERİ TABANI BİLGİLERİNİZ
-        // =========================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyAOc8bVcwsdoyGvbkE088RJTaH5Ar-z82o",
             authDomain: "bozok-yapi.firebaseapp.com",
@@ -225,41 +220,39 @@
             appId: "1:40656343275:web:ddaf9ab81d0d9f47e9eeae"
         };
         
-        // Firebase Başlatma
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Sabit Şifreler ve Başlangıç Verileri
         const data = {
-            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 1
-            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 2
-            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 3
-            "NA==": {"s": "MTM6NzU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 4
-            "NQ==": {"s": "ODQ6MjE=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 5
-            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 8
-            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 9
-            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 10
-            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 11
-            "MTI=": {"s": "NDU4MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 12
-            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 13
-            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 14
-            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 15
-            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "NzAw"},           // Daire 16
-            "MTc=": {"s": "NDU8Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},       // Daire 17
-            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 18
-            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 19
-            "MjA=": {"s": "ODM9MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 20
-            "MjE=": {"s": "MTI8NzY=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 21
-            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 22
-            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 23
-            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": "MA=="},           // Daire 24
-            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 25
-            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 26
-            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 27
-            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 28
-            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},       // Daire 29
-            "MzA=": {"s": "NjU4NTM=", "b": "MA==", "a": "MA==", "t": "NjAw"},           // Daire 30
-            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "ODAw"}            // Daire 31
+            "MQ==": {"s": "NDk4NjE=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "Mg==": {"s": "NzEyNDY=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "Mw==": {"s": "MjM1ODM=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},
+            "NA==": {"s": "MTM6NzU=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "NQ==": {"s": "ODQ6MjE=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},
+            "OA==": {"s": "NTQ4OTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "OQ==": {"s": "Nzg5NTI=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTA=": {"s": "NTYzMjE=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MTI=": {"s": "NDU8MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "NzAw"},
+            "MTc=": {"s": "NDU8Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},
+            "MTg=": {"s": "MTU3ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTk=": {"s": "MTI1NDY=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MjA=": {"s": "ODM9MTQ=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjE=": {"s": "MTI8NzY=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},
+            "MjI=": {"s": "NDc5NjI=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MjM=": {"s": "NjUxMjc=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MjQ=": {"s": "Njg3NDY=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MjU=": {"s": "Nzk4MjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MjY=": {"s": "OTYxNDg=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "Mjc=": {"s": "MzY5MTU=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "Mjg=": {"s": "OTY1MTI=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},
+            "Mjk=": {"s": "MzYyNTg=", "b": "MA==", "a": "MA==", "t": "MTIwMA=="},
+            "MzA=": {"s": "NjU4NTM=", "b": "MA==", "a": "MA==", "t": "NjAw"},
+            "MzE=": {"s": "NzM1OTE=", "b": "MA==", "a": "MA==", "t": "ODAw"}
         };
 
         const _mkey = "NzEyNDYyNA=="; 
@@ -269,7 +262,6 @@
         };
         const aylarTR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"];
 
-        // Global Canlı Değişkenler
         let canlıEkBorclar = {};
         let canlıOdemeler = [];
         let canlıGirisler = [];
@@ -279,7 +271,6 @@
         let canlıAciklama = "03.06.2026 tarihine kadar yapılan ödemeleri kapsar";
 
         window.onload = function() {
-            // Canlı Verileri Firebase'den Çekme ve Gerçek Zamanlı Dinleme
             db.ref('bozok_yapi').on('value', (snapshot) => {
                 const fbData = snapshot.val() || {};
                 
@@ -304,11 +295,9 @@
                 canlıYil = fbData.aktifYil !== undefined ? fbData.aktifYil : new Date().getFullYear();
                 canlıAciklama = fbData.aciklama || "03.06.2026 tarihine kadar yapılan ödemeleri kapsar";
 
-                // Arayüzü Güncelleme
                 document.getElementById('dinamikBaslik').innerText = `${aylarTR[canlıAy]} ${canlıYil} Aidat Sorgulama`;
                 document.getElementById('adminAciklamaMetni').value = canlıAciklama;
                 
-                // Dönem Seçici Senkronizasyonu
                 const adminAySecici = document.getElementById('adminAySecimi');
                 if(adminAySecici.options.length === 0) {
                     const mevcutYil = new Date().getFullYear();
@@ -329,7 +318,6 @@
                 adminDuyuruYonetimListele();
             });
 
-            // Seçim Kutularını Doldurma
             const select = document.getElementById('daireSelect');
             const adminSelect = document.getElementById('adminDaireSelect');
             
@@ -481,9 +469,6 @@
             dAlan.innerHTML = html; dAlan.style.display = "block";
         }
 
-        // ==========================================
-        // CANLI BULUT YÖNETİCİ AKSIYONLARI
-        // ==========================================
         function adminAciklamaGuncelle() {
             const txt = document.getElementById('adminAciklamaMetni').value;
             db.ref('bozok_yapi/aciklama').set(txt);
@@ -612,7 +597,6 @@
             }
         }
 
-        // Formspree Entegrasyonu
         async function talepGonder() {
             const daireKey = document.getElementById('daireSelect').value;
             const mesaj = document.getElementById('talepMetni').value;
