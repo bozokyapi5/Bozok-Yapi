@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Bozok Yapı Sorgulama</title>
-    <!-- Firebase SDK Bağlantıları -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
@@ -23,13 +22,13 @@
             box-sizing: border-box; 
         }
         
-        /* Ana sorgulama kartı - Ferah ve Canlı Okyanus Renk Geçişi (Vibrant Ocean) */
+        /* Ana sorgulama kartı - İstediğin orijinal lacivertten turkuaza yumuşak renk geçişi */
         .card { 
-            background: #2563eb !important; 
-            background: linear-gradient(135deg, #2563eb 0%, #3b82f6 45%, #06b6d4 100%) !important; 
+            background: #1e3c72 !important; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #00c6ff 100%) !important; 
             padding: 35px 20px; 
             border-radius: 25px; 
-            box-shadow: 0 20px 45px rgba(37, 99, 235, 0.2); 
+            box-shadow: 0 20px 45px rgba(30, 60, 114, 0.25); 
             width: 100%; 
             max-width: 400px; 
             text-align: center; 
@@ -44,12 +43,12 @@
         .sub-title { color: #e0f2fe; font-size: 15px; margin-bottom: 30px; font-weight: 600; letter-spacing: 0.5px; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         
         select, input, textarea { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #cbd5e1; border-radius: 15px; font-size: 16px; box-sizing: border-box; outline: none; -webkit-appearance: none; background: white; transition: 0.3s; color: #1e293b; }
-        select:focus, input:focus, textarea:focus { border-color: #3b82f6; box-shadow: 0 0 8px rgba(59, 130, 246, 0.5); }
+        select:focus, input:focus, textarea:focus { border-color: #2a5298; box-shadow: 0 0 8px rgba(42, 82, 152, 0.5); }
         
         #passInput { margin-bottom: 40px; }
         
-        /* Buton renkleri - SORGULA butonu eski sevilen rengine döndürüldü */
-        button { width: 100%; padding: 15px; background-color: #2c3e50; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+        /* Buton renkleri - SORGULA butonu ilk halindeki düz mavi tonuna getirildi */
+        button { width: 100%; padding: 15px; background-color: #0052cc; color: white; border: none; border-radius: 15px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 12px; transition: 0.3s; box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
         button:active { transform: scale(0.98); }
         
         .iban-btn { background-color: #0d9488; font-size: 14px; padding: 13px; }
@@ -57,7 +56,7 @@
         .info-btn { background-color: #d97706; font-size: 14px; padding: 13px; }
         .announcement-btn { background-color: #e11d48; font-size: 14px; padding: 13px; }
         
-        #result, #iban-area, #request-area, #info-area, #announcements-area, #admin-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 2px solid #2563eb; animation: fadeIn 0.4s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+        #result, #iban-area, #request-area, #info-area, #announcements-area, #admin-area { margin-top: 20px; padding: 20px; border-radius: 15px; text-align: left; display: none; background: #ffffff; border: 2px solid #1e3c72; animation: fadeIn 0.4s ease-out; box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
         
         .info-list { margin: 0; padding-left: 15px; font-size: 13px; color: #333; line-height: 1.6; }
         .info-list li { margin-bottom: 10px; }
@@ -98,7 +97,7 @@
         .detay-item b { font-weight: 700; color: #000000; }
 
         .admin-log-item { font-size: 11px; background: #f8f9fa; padding: 5px; margin-top: 5px; border-radius: 5px; border-left: 3px solid #2ecc71; display: flex; justify-content: space-between; align-items: center;}
-        .admin-log-item.login-log { border-left-color: #3b82f6; background: #eff6ff; }
+        .admin-log-item.login-log { border-left-color: #2a5298; background: #eff6ff; }
         .admin-section-title { font-size: 12px; font-weight: bold; color: #205295; margin-top: 15px; margin-bottom: 5px; border-bottom: 1px dashed #cfd8dc; padding-bottom: 3px; }
         .admin-btn-sm { background-color: #34495e; padding: 8px; font-size: 12px; margin-top: 5px; width: auto; display: inline-block; margin-right: 5px; }
         .duyuru-yonetim-item { display: flex; justify-content: space-between; align-items: center; background: #fdfefe; border: 1px solid #e2e8f0; padding: 6px; margin-bottom: 4px; border-radius: 8px; font-size: 11px; }
@@ -235,7 +234,7 @@
             "MTE=": {"s": "NDc5NjU=", "b": "MA==", "a": "MA==", "t": "NjAw"},
             "MTI=": {"s": "NDU8MTY=", "b": "MA==", "a": "MA==", "t": "NjAw"},
             "MTM=": {"s": "MzI1ODk=", "b": "MA==", "a": "MA==", "t": "MA=="},
-            "MTQ=": {"s": "NzQ2OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},
+            "MTQ=": {"s": "NzQ6OTg=", "b": "MA==", "a": "MA==", "t": "MA=="},
             "MTU=": {"s": "MTI0Nzg=", "b": "MA==", "a": "MA==", "t": "NjAw"},
             "MTY=": {"s": "NTg5MzQ=", "b": "MA==", "a": "MA==", "t": "NzAw"},
             "MTc=": {"s": "NDU8Nzk=", "b": "MA==", "a": "MA==", "t": "MTUwMA=="},
@@ -525,7 +524,7 @@
             if(!canlıGirisler || canlıGirisler.length === 0) { girisAlan.innerHTML = "<div style='font-size:11px; color:gray; font-style:italic;'>Henüz giriş yapan olmadı.</div>"; return; }
             let html = "";
             canlıGirisler.slice().reverse().forEach(g => {
-                html += `<div class="admin-log-item login-log"><span>👤 <b>Daire No: ${g.daire}</b> sisteme giriş yaptı.</span> <span style="color:#2563eb; font-weight:500;">${g.zaman}</span></div>`;
+                html += `<div class="admin-log-item login-log"><span>👤 <b>Daire No: ${g.daire}</b> sisteme giriş yaptı.</span> <span style="color:#1e3c72; font-weight:500;">${g.zaman}</span></div>`;
             });
             girisAlan.innerHTML = html;
         }
