@@ -132,9 +132,13 @@
             <div class="admin-section-title">📅 Ana Sayfa Aktif Dönem Seçimi</div>
             <select id="adminAySecimi" onchange="adminDonemGuncelle()"></select>
 
+           <!-- YENİ KOD -->
             <div class="admin-section-title">➕ Yeni Ay Aidat Matrahı Yansıt</div>
-            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Yeni aya girildiğinde tüm dairelere tek tıkla +600 TL borç ekler.</p>
-            <button class="admin-btn-sm" style="background-color: #e67e22;" onclick="adminYeniAyBorcuEkle()">Tüm Dairelere +600 TL Aidat Ekle</button>
+            <p style="font-size: 11px; color:#7f8c8d; margin: 0;">Bu aya ait aidat tutarını girip tüm dairelere ekleyebilirsiniz.</p>
+            <div style="display: flex; gap: 8px; margin-top: 5px;">
+                <input type="number" id="adminAylikAidatTutari" value="600" placeholder="Aidat Tutarı (TL)" style="margin:0; padding:8px; font-size:13px; width:40%;">
+                <button class="admin-btn-sm" style="background-color: #e67e22; margin:0; width:60%;" onclick="adminYeniAyBorcuEkle()">Tüm Dairelere Ekle</button>
+            </div>
 
             <div class="admin-section-title">💰 Ödeme Girişi Yap</div>
             <select id="adminDaireSelect"><option value="">Ödeme Yapan Daire</option></select>
@@ -411,7 +415,9 @@
                 canlıOdemeler.forEach(o => { if(String(o.daire) === String(daireNo)) odenenYonetici += parseFloat(o.miktar); });
                 
                 let guncelToplam = Math.max(0, (hamBorc + eklenenYeniAyBorclari) - odenenYonetici);
-                let gecmisBorcGosterim = Math.max(0, guncelToplam - 600); 
+                // YENİ SATIR:
+                let oAnkiAyAidati = aidatTarifesi[canlıYil] || (document.getElementById('adminAylikAidatTutari') ? parseFloat(document.getElementById('adminAylikAidatTutari').value) : 600);
+                let gecmisBorcGosterim = Math.max(0, guncelToplam - oAnkiAyAidati); 
 
                 res.innerHTML = `
                     <div class="sorgu-konteyner">
@@ -436,37 +442,50 @@
             } else { alert("Hatalı şifre veya daire seçimi!"); }
         }
 
-        function detayHesapla(kalanBorc) {
-            const dAlan = document.getElementById('borc-detay-listesi');
-            if (dAlan.style.display === "block") { dAlan.style.display = "none"; return; }
-            
-            let kalan = parseFloat(kalanBorc);
-            if (isNaN(kalan) || kalan <= 0) {
-                dAlan.innerHTML = "<div style='color:green; font-weight:bold; font-size:14px; text-align:center; margin-top:10px;'>Ödenmemiş borcunuz bulunmamaktadır.</div>";
-                dAlan.style.display = "block"; return;
-            }
-            
-            let html = "<div class='detay-header'>Hangi Aylara Ait Borç Var?</div>";
-            let sAy = canlıAy;
-            let sYil = canlıYil;
+        // Yıllara göre aidat matrahları (Gelecekte yeni yıla girildiğinde buraya yeni yılı yazabilirsiniz)
+const aidatTarifesi = {
+    2025: 500,
+    2026: 600,
+    2027: 750, // 2027 yılı geldiğinde geçerli olacak aidat
+    2028: 900  // İleride 2028 yılı gelince kullanılacak tutar
+};
 
-            for (let i = 0; i < 24; i++) {
-                if (kalan <= 0) break;
-                let matrah = (sYil >= 2026) ? 600 : 500;
-                let baslik = aylarTR[sAy] + " " + sYil;
+function detayHesapla(kalanBorc) {
+    const dAlan = document.getElementById('borc-detay-listesi');
+    if (dAlan.style.display === "block") { dAlan.style.display = "none"; return; }
+    
+    let kalan = parseFloat(kalanBorc);
+    if (isNaN(kalan) || kalan <= 0) {
+        dAlan.innerHTML = "<div style='color:green; font-weight:bold; font-size:14px; text-align:center; margin-top:10px;'>Ödenmemiş borcunuz bulunmamaktadır.</div>";
+        dAlan.style.display = "block"; return;
+    }
+    
+    let html = "<div class='detay-header'>Hangi Aylara Ait Borç Var?</div>";
+    let sAy = canlıAy;
+    let sYil = canlıYil;
 
-                if (kalan >= matrah) {
-                    html += `<div class='detay-item'><span>${baslik}</span><b>${matrah} TL</b></div>`;
-                    kalan -= matrah;
-                } else if (kalan > 0) {
-                    html += `<div class='detay-item'><span>${baslik} (Kısmi)</span><b>${kalan.toFixed(0)} TL</b></div>`;
-                    kalan = 0;
-                }
-                sAy--; if(sAy < 0) { sAy = 11; sYil--; }
-            }
-            if (kalan > 0) html += `<div class='detay-item'><span>Eski Dönem Bakiyesi</span><b>${kalan.toFixed(0)} TL</b></div>`;
-            dAlan.innerHTML = html; dAlan.style.display = "block";
+    for (let i = 0; i < 36; i++) {
+        if (kalan <= 0) break;
+        
+        // Hangi yılda ise O YILIN aidat tutarını alır. Tanımlı değilse paneldeki kutucuk değerini alır.
+        let adminInput = document.getElementById('adminAylikAidatTutari');
+        let guncelPanelAidat = adminInput ? parseFloat(adminInput.value) : 600;
+        
+        let matrah = aidatTarifesi[sYil] || guncelPanelAidat;
+        let baslik = aylarTR[sAy] + " " + sYil;
+
+        if (kalan >= matrah) {
+            html += `<div class='detay-item'><span>${baslik}</span><b>${matrah} TL</b></div>`;
+            kalan -= matrah;
+        } else if (kalan > 0) {
+            html += `<div class='detay-item'><span>${baslik} (Kısmi)</span><b>${kalan.toFixed(0)} TL</b></div>`;
+            kalan = 0;
         }
+        sAy--; if(sAy < 0) { sAy = 11; sYil--; }
+    }
+    if (kalan > 0) html += `<div class='detay-item'><span>Eski Dönem Bakiyesi</span><b>${kalan.toFixed(0)} TL</b></div>`;
+    dAlan.innerHTML = html; dAlan.style.display = "block";
+}
 
         function adminAciklamaGuncelle() {
             const txt = document.getElementById('adminAciklamaMetni').value;
@@ -482,17 +501,19 @@
 
         function adminYeniAyBorcuEkle() {
             let aktifAy = aylarTR[canlıAy];
-            if(confirm(`DİKKAT: [ ${aktifAy} ${canlıYil} ] dönemi için TÜM dairelerin borcuna +600 TL aidat eklenecektir. Onaylıyor musunuz?`)) {
+            let eklenecekTutar = parseFloat(document.getElementById('adminAylikAidatTutari').value) || 600;
+
+            if(confirm(`DİKKAT: [ ${aktifAy} ${canlıYil} ] dönemi için TÜM dairelerin borcuna +${eklenecekTutar} TL aidat eklenecektir. Onaylıyor musunuz?`)) {
                 Object.keys(data).forEach(key => {
                     let dNo = cozu_b64(key).replace(/\D/g,'');
                     if(!dNo) return;
                     let eskiEkBorc = canlıEkBorclar[dNo] ? parseFloat(canlıEkBorclar[dNo]) : 0;
-                    canlıEkBorclar[dNo] = eskiEkBorc + 600;
+                    canlıEkBorclar[dNo] = eskiEkBorc + eklenecekTutar;
                 });
                 db.ref('bozok_yapi/ekBorclar').set(canlıEkBorclar);
-                alert("Başarılı: Yeni ay yükü tüm dünyaya dağıtıldı.");
-            }
+                alert(`Başarılı: Tüm dairelere +${eklenecekTutar} TL aidat eklendi.`);
         }
+    }
 
         function adminOdemeKaydet() {
             const daire = document.getElementById('adminDaireSelect').value;
